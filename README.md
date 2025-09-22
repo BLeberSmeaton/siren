@@ -33,8 +33,11 @@ All data files organized by processing stage
 - `Jira_ARLive_categorized.csv` - Categorized output from Python system
 
 ### `/Source/`
-New C# Support Signal Intelligence Engine (to be created)
-- Will contain the .NET solution with plugin architecture
+C# Support Signal Intelligence Engine (SIREN) - Complete TDD Foundation
+- `SIREN.Core/` - Core domain models and interfaces
+- `SIREN.Core.Tests/` - Comprehensive test suite (17 tests)
+- `SIREN.Console/` - Demonstration console application
+- `SIREN.sln` - Visual Studio solution file
 
 ### `/Documentation/`
 Project documentation and presentation materials
@@ -42,11 +45,84 @@ Project documentation and presentation materials
 - Requirements documentation
 - Presentation materials
 
+## ⚡ Getting Started
+
+### Prerequisites
+- .NET 9.0 SDK or later
+- Command line terminal (PowerShell, bash, etc.)
+
+### Build the Solution
+```bash
+# Navigate to the Source directory
+cd Source
+
+# Restore packages and build the entire solution
+dotnet build
+
+# Or build a specific project
+dotnet build SIREN.Core/SIREN.Core.csproj
+```
+
+### Run Tests
+```bash
+# Run all tests (from Source directory)
+dotnet test
+
+# Run tests with detailed output
+dotnet test --verbosity normal
+
+# Run tests for a specific project
+dotnet test SIREN.Core.Tests/SIREN.Core.Tests.csproj
+```
+
+### Run the Console Application
+```bash
+# Run the demonstration console app (from Source directory)
+dotnet run --project SIREN.Console
+
+# Or navigate to the console project and run
+cd SIREN.Console
+dotnet run
+```
+
+### Expected Output
+The console application demonstrates:
+- ✅ Loading signals from CSV provider
+- ✅ Categorization engine with your business rules
+- ✅ Dependency injection working
+- ✅ Complete TDD foundation (17 passing tests)
+
+### Quick Verification
+```bash
+# Verify everything works in one command (from repository root)
+cd Source && dotnet test && dotnet run --project SIREN.Console
+
+# Or if already in Source directory:
+dotnet test && dotnet run --project SIREN.Console
+```
+
+## 🎯 Current Status
+
+### ✅ **Completed - TDD Foundation** 
+- Core interfaces: `ISignalProvider`, `ICategorizer` with plugin architecture
+- `SupportSignal` domain model with all required properties
+- `CategoryEngine` with your complete CSV categorization rules and priority logic
+- `CsvSignalProvider` for processing existing Jira exports
+- Dependency injection setup with console demonstration
+- **17 comprehensive tests** covering all core functionality
+
+### 🔜 **Next Phase - Tomorrow's Development**
+- JSON storage implementation for persistence
+- Web dashboard UI with real-time feedback
+- Jira REST API provider (eliminate manual exports)
+- Manual scoring system for human triage
+- Demo preparation for Innovation Day
+
 ## 🚀 Development Approach
 
-1. **Phase 1**: CSV Provider (port Python logic to C# plugin architecture)
-2. **Phase 2**: Jira API Provider (eliminate manual exports)
-3. **Phase 3**: Teams Provider (real-time signal aggregation)
+1. **Phase 1**: ✅ CSV Provider (TDD foundation with plugin architecture)
+2. **Phase 2**: 🔄 Jira API Provider (eliminate manual exports)
+3. **Phase 3**: 📋 Teams Provider (real-time signal aggregation)
 
 ## 🏗️ Architecture Highlights
 

@@ -1,0 +1,6 @@
+@SIREN.API_HostAddress = http://localhost:5227
+
+GET {{SIREN.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

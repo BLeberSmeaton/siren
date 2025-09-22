@@ -1,157 +1,266 @@
-# Support Signal Intelligence Response Engine
+# 🚨 SIREN - Support Signal Intelligence Response Engine
 
-**Innovation Week Project**: "Support Signals, Smarter Decisions: Reducing Toil with AI"
-aka 'siren' 
+**A modern React + ASP.NET Core dashboard for intelligent support signal categorization and human-AI collaborative triage.**
 
-## 🎯 Project Overview
-Transform scattered support signals into actionable intelligence and toil reduction opportunities through **Human+AI collaboration**. AI handles the heavy lifting of data aggregation and pattern detection, while humans focus on strategic triage and creative problem-solving.
+## 📋 **PROJECT OVERVIEW**
 
-## 🤖 Human+AI Collaboration Model
-**AI Amplifies Human Capabilities:**
-- **AI Does**: Automated categorization, pattern detection, trend analysis, data processing
-- **Humans Do**: Strategic triage, business context, creative solutions, relationship management  
-- **Together**: Transform reactive support into proactive improvement intelligence
+SIREN is an enterprise-grade solution that combines AI-powered categorization with human expertise for support signal management. Built with a React frontend and ASP.NET Core Web API backend, it showcases modern web development practices while preserving 100% of existing tested business logic.
 
-## 📁 Project Structure
+### **🎯 Key Innovation: Human+AI Collaboration**
+- **AI Categorization**: Automatic signal classification using keyword-based rules
+- **Human Triage**: Manual scoring interface for business context and priority override
+- **Visual Analytics**: Real-time dashboards showing collaborative insights
+- **Enterprise Ready**: Professional UI with responsive design and comprehensive testing
 
-### `/Legacy/`
-Original Python-based dashboard system (reference implementation)
-- `dashboard.py` - Streamlit dashboard with basic categorization
-- `requirements.txt` - Python dependencies
+## 🏗️ **ARCHITECTURE**
 
-### `/Data/`
-All data files organized by processing stage
-
-#### `/Data/Config/`
-- `IssueType.csv` - Categorization rules and keywords (shared by both systems)
-
-#### `/Data/Raw/`
-- `Jira (ARLive)1.csv` - Original Jira export
-- `Jira (ARLive)1_cleaned.csv` - Cleaned data
-
-#### `/Data/Processed/`
-- `Jira_ARLive_categorized.csv` - Categorized output from Python system
-
-### `/Source/`
-C# Support Signal Intelligence Engine (SIREN) - Complete TDD Foundation
-- `SIREN.Core/` - Core domain models and interfaces
-- `SIREN.Core.Tests/` - Comprehensive test suite (17 tests)
-- `SIREN.Console/` - Demonstration console application
-- `SIREN.sln` - Visual Studio solution file
-
-### `/Documentation/`
-Project documentation and presentation materials
-- Architecture diagrams
-- Requirements documentation
-- Presentation materials
-
-## ⚡ Getting Started
-
-### Prerequisites
-- .NET 9.0 SDK or later
-- Command line terminal (PowerShell, bash, etc.)
-
-### Build the Solution
-```bash
-# Navigate to the Source directory
-cd Source
-
-# Restore packages and build the entire solution
-dotnet build
-
-# Or build a specific project
-dotnet build SIREN.Core/SIREN.Core.csproj
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ React Frontend (TypeScript)                    Port 3000       │
+│ ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐   │
+│ │   Dashboard     │ │  Signal Table   │ │  Triage Panel   │   │
+│ │   Analytics     │ │   + Filtering   │ │ (Innovation!)   │   │
+│ └─────────────────┘ └─────────────────┘ └─────────────────┘   │
+│ • Feelix-inspired design • Recharts • React Testing Library   │
+└─────────────────────────────────────────────────────────────────┘
+                                │ HTTP API Calls
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│ ASP.NET Core Web API (.NET 9.0)               Port 5135       │
+│ ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐   │
+│ │ SignalsController│ │CategoriesController│ │  CORS + OpenAPI │   │
+│ │ • GET/PUT       │ │ • Stats/Filter  │ │   Configured    │   │
+│ │ • Manual Score  │ │ • Auto-Categorize│ │                 │   │
+│ └─────────────────┘ └─────────────────┘ └─────────────────┘   │
+└─────────────────────────────────────────────────────────────────┘
+                                │ Service Layer
+                                ▼
+┌─────────────────────────────────────────────────────────────────┐
+│ SIREN.Core (Existing - 100% Preserved)                        │
+│ ┌─────────────────┐ ┌─────────────────┐ ┌─────────────────┐   │
+│ │ ISignalProvider │ │  ICategorizer   │ │  SupportSignal  │   │
+│ │ (Plugin Architecture) │ (Keyword Engine) │    (Models)     │   │
+│ └─────────────────┘ └─────────────────┘ └─────────────────┘   │
+│ ✅ 17 Passing Tests • CSV Provider • Category Engine         │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-### Run Tests
+## 🚀 **GETTING STARTED**
+
+### **Prerequisites**
+- .NET 9.0 SDK
+- Node.js (v16+ recommended)
+- Visual Studio Code or Visual Studio 2022
+
+### **1. Clone and Setup**
 ```bash
-# Run all tests (from Source directory)
-dotnet test
-
-# Run tests with detailed output
-dotnet test --verbosity normal
-
-# Run tests for a specific project
-dotnet test SIREN.Core.Tests/SIREN.Core.Tests.csproj
+git clone https://github.com/BLeberSmeaton/siren.git
+cd siren/Source
 ```
 
-### Run the Console Application
+### **2. Start the API Server**
 ```bash
-# Run the demonstration console app (from Source directory)
-dotnet run --project SIREN.Console
+# Start the ASP.NET Core Web API
+dotnet run --project SIREN.API
 
-# Or navigate to the console project and run
-cd SIREN.Console
-dotnet run
+# API will be available at: http://localhost:5135
+# OpenAPI docs at: http://localhost:5135/swagger
 ```
 
-### Expected Output
-The console application demonstrates:
-- ✅ Loading signals from CSV provider
-- ✅ Categorization engine with your business rules
-- ✅ Dependency injection working
-- ✅ Complete TDD foundation (17 passing tests)
-
-### Quick Verification
+### **3. Start the React Frontend**
 ```bash
-# Verify everything works in one command (from repository root)
-cd Source && dotnet test && dotnet run --project SIREN.Console
+# In a new terminal window
+cd siren-dashboard
 
-# Or if already in Source directory:
-dotnet test && dotnet run --project SIREN.Console
+# Install dependencies (first time only)
+npm install
+
+# Start the React development server
+npm start
+
+# Frontend will be available at: http://localhost:3000
 ```
 
-## 🎯 Current Status
+### **4. Open the Dashboard**
+Navigate to `http://localhost:3000` to see the full SIREN dashboard with real-time data!
 
-### ✅ **Completed - TDD Foundation** 
-- Core interfaces: `ISignalProvider`, `ICategorizer` with plugin architecture
-- `SupportSignal` domain model with all required properties
-- `CategoryEngine` with your complete CSV categorization rules and priority logic
-- `CsvSignalProvider` for processing existing Jira exports
-- Dependency injection setup with console demonstration
-- **17 comprehensive tests** covering all core functionality
+## 📊 **DASHBOARD FEATURES**
 
-### 🔜 **Next Phase - Tomorrow's Development**
-- JSON storage implementation for persistence
-- Web dashboard UI with real-time feedback
-- Jira REST API provider (eliminate manual exports)
-- Manual scoring system for human triage
-- Demo preparation for Innovation Day
+### **🎯 Manual Triage (Innovation Day Highlight)**
+Click "Triage" on any signal to access the human+AI collaboration interface:
+- **AI Analysis**: Shows automatic categorization with confidence
+- **Human Assessment**: Priority scoring slider (1-10 scale)
+- **Category Override**: Manual category selection
+- **Business Context**: Triage notes for decision rationale
+- **Save & Track**: Persistent manual scoring
 
-## 🚀 Development Approach
+### **📈 Analytics Dashboard**
+- **Summary Cards**: Total signals, categorized count, manual triage progress
+- **Visual Charts**: Bar charts and pie charts showing category distribution
+- **Category Statistics**: Detailed breakdown with average scores and latest activity
+- **Real-time Updates**: Automatic refresh when data changes
 
-1. **Phase 1**: ✅ CSV Provider (TDD foundation with plugin architecture)
-2. **Phase 2**: 🔄 Jira API Provider (eliminate manual exports)
-3. **Phase 3**: 📋 Teams Provider (real-time signal aggregation)
+### **📋 Signal Management**
+- **Intelligent Table**: Sortable, filterable signal list
+- **Category Badges**: Visual indicators for different signal types
+- **Priority Scores**: Color-coded manual and automatic scoring
+- **Responsive Design**: Works on desktop, tablet, and mobile
 
-## 🏗️ Architecture Highlights
+## 🧪 **TESTING**
 
-- Plugin-based provider system
-- JSON-based storage with database migration path
-- Multi-timeframe reporting (weekly, monthly, quarterly, yearly)
-- Manual scoring/triage system
-- Positive, actionable intelligence generation
+### **Backend Tests (Existing)**
+```bash
+# Run the comprehensive test suite (17 tests)
+dotnet test SIREN.Core.Tests
 
-## 📊 Business Value - Human+AI Synergy
+# All tests should pass - foundation is solid! ✅
+```
 
-**🔥 The Problem**: Support teams drowning in manual, repetitive analysis across 8+ disconnected channels
+### **Frontend Tests (New)**
+```bash
+cd siren-dashboard
 
-**🤖 AI Solution**: Automated heavy lifting
-- Process 1000s of signals in seconds vs. hours of human analysis
-- Detect patterns across months of data instantly
-- Generate improvement opportunities automatically
+# Run React component tests
+npm test
 
-**👥 Human Excellence**: Strategic decision-making
-- Apply business context AI can't understand
-- Make nuanced triage decisions based on relationships
-- Create innovative solutions from AI-identified patterns
-- Focus on high-value customer relationships
+# Run tests once
+npm test -- --watchAll=false
 
-**🚀 Combined Impact**: 
-- **70% time savings** on signal analysis (AI automation)
-- **40% better prioritization** (human judgment + AI insights)
-- **Proactive problem-solving** vs. reactive firefighting
+# Tests include Dashboard, API integration, and component rendering
+```
+
+## 📁 **PROJECT STRUCTURE**
+
+```
+Source/
+├── SIREN.Core/                    # 🏗️ Domain Logic (Existing)
+│   ├── Interfaces/               # Plugin contracts
+│   ├── Models/                   # Domain models
+│   ├── Providers/               # Data sources (CSV)
+│   └── Services/                # Business logic
+├── SIREN.Core.Tests/             # ✅ Test Suite (17 tests)
+├── SIREN.API/                    # 🌐 Web API (New)
+│   ├── Controllers/             # REST endpoints
+│   │   ├── SignalsController.cs    # Signal operations
+│   │   └── CategoriesController.cs # Category operations
+│   └── Program.cs               # API configuration
+├── SIREN.Console/               # 🖥️ CLI Demo (Existing)
+└── siren-dashboard/             # ⚛️ React Frontend (New)
+    ├── src/
+    │   ├── components/          # React components
+    │   │   ├── SignalTable.tsx      # Signal list view
+    │   │   ├── TriagePanel.tsx      # Manual triage UI
+    │   │   └── DashboardSummary.tsx # Analytics
+    │   ├── pages/               # Page components
+    │   ├── services/            # API integration
+    │   ├── types/              # TypeScript definitions
+    │   └── __tests__/          # Component tests
+    └── package.json            # Dependencies
+```
+
+## 🎯 **API ENDPOINTS**
+
+### **Signals**
+- `GET /api/signals` - Get all categorized signals
+- `GET /api/signals/{id}` - Get specific signal
+- `PUT /api/signals/{id}/manual-score` - Update manual scoring
+- `GET /api/signals/by-category/{category}` - Filter by category
+- `GET /api/signals/summary` - Dashboard statistics
+
+### **Categories**
+- `GET /api/categories` - Get all categories
+- `GET /api/categories/stats` - Category statistics
+- `POST /api/categories/categorize/{id}` - Manual categorization
+
+## 🔧 **CONFIGURATION**
+
+### **API Settings**
+- Default port: `5135` (configurable in `launchSettings.json`)
+- CORS enabled for React development ports
+- OpenAPI/Swagger documentation enabled in development
+
+### **Frontend Settings**
+- API base URL: `http://localhost:5135/api` (configurable in `api.ts`)
+- Development port: `3000`
+- Production build: `npm run build`
+
+## 🚀 **DEPLOYMENT**
+
+### **Production Build**
+```bash
+# Build the React frontend for production
+cd siren-dashboard
+npm run build
+
+# Publish the API for deployment
+cd ..
+dotnet publish SIREN.API -c Release -o ./publish
+```
+
+### **Docker Support** (Future Enhancement)
+Ready for containerization with Docker Compose for full-stack deployment.
+
+## 📚 **TECHNOLOGY STACK**
+
+### **Backend**
+- **ASP.NET Core 9.0** - Modern web API framework
+- **C#** - Type-safe business logic
+- **Dependency Injection** - Clean architecture
+- **OpenAPI/Swagger** - API documentation
+
+### **Frontend**
+- **React 19** - Modern UI framework
+- **TypeScript** - Type safety and developer experience
+- **Recharts** - Data visualization
+- **Axios** - HTTP client for API calls
+- **CSS Custom Properties** - Feelix-inspired design system
+
+### **Testing**
+- **xUnit** - Backend unit testing (existing)
+- **Jest** - JavaScript unit testing
+- **React Testing Library** - Component testing
+- **MSW** - API mocking (future enhancement)
+
+## 🎉 **INNOVATION DAY DEMO SCRIPT**
+
+1. **Show the Dashboard** - Modern, professional interface
+2. **Demonstrate Auto-Categorization** - AI working in real-time
+3. **Manual Triage Feature** - Human expertise adding business context
+4. **Analytics Insight** - Visual representation of human+AI collaboration
+5. **Responsive Design** - Works across devices
+6. **Enterprise Ready** - Full testing, documentation, and architecture
+
+## 🤝 **CONTRIBUTING**
+
+### **Development Workflow**
+1. Backend changes in `SIREN.Core` or `SIREN.API`
+2. Frontend changes in `siren-dashboard`
+3. Run tests for both frontend and backend
+4. Update documentation as needed
+
+### **Code Standards**
+- C# follows standard .NET conventions
+- React components use TypeScript
+- CSS follows BEM-like naming
+- API follows REST principles
+
+## 📈 **FUTURE ENHANCEMENTS**
+
+- [ ] **Feelix Integration** - Replace placeholder components with actual Feelix library
+- [ ] **Real-time Updates** - SignalR integration for live dashboard updates
+- [ ] **Advanced Filtering** - Date ranges, multiple category selection
+- [ ] **Export Capabilities** - PDF reports and CSV downloads
+- [ ] **User Authentication** - Role-based access control
+- [ ] **Multiple Data Sources** - Jira, Teams, ServiceNow integration
+- [ ] **Machine Learning** - Enhanced categorization with ML models
+
+## 📞 **SUPPORT**
+
+For questions or support:
+- **GitHub Issues**: [Create an issue](https://github.com/BLeberSmeaton/siren/issues)
+- **Documentation**: Check `Documentation/` folder for detailed guides
+- **Tests**: Run the test suite to verify your setup
 
 ---
 
-**Innovation Day Goal**: Demonstrate how Human+AI collaboration transforms support from cost center to strategic improvement driver.
+**Built with ❤️ for Innovation Day - Showcasing the power of Human+AI Collaboration in Enterprise Support Management**

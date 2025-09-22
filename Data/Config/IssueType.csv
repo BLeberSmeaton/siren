@@ -1,0 +1,13 @@
+Issue Type,Typical Keywords/Indicators
+API,"""API"", ""Public API"", ""endpoint"", ""key"", ""rate limiting"""
+Certificate,"""certificate"", ""expiry"", ""renewal"", ""thumbprint"", ""TLS"", ""keyvault"", ""DigiCert"", ""certificate install"""
+Supplier Feeds,"""supplier feed"", ""mapping"", ""ledger"", ""integrator"", ""connection"", ""supplierId"", ""NZ migrations"""
+Bank Feeds,"""bank feed"", ""Bank Feed"", ""bank feeds"""
+Prod Errors,"""error"", ""error message"", ""504"", ""503"", ""timeout"", ""GatewayTimeout"", ""InternalServerError"", ""fail"", ""500"", ""critical"", ""unexpected"", ""failures"", ""alert"", ""test failing"""
+Feature Support,"""consent"", ""Mydot User ID"", ""Administrator"", ""user role"", ""permission"", ""Consent App"", ""OAuthToken"", ""ConsentIsInvalid"", ""scope"", ""TPAM"", ""validation"", ""authorization"", ""company file selection"", ""CanonicalLogs"", ""Canonical"", ""Westpac"""
+Customer Support,"""publicly available"", ""client"", ""exposed"", ""customer confusion"", ""documentation"", ""IP"", ""IP addresses"""
+Other,"""decommission"", ""cleanup"", ""legacy"", ""miscellaneous"", ""improvements"", ""patch"", ""update"", ""DNA key rotation"", ""unit test coverage"", ""infrastructure"", ""version"""
+Release Effort,"""GoCD"", ""deploy"", ""pipeline"", ""release"", ""GoCD agents"""
+Access Requests,"""Grant access"", ""Grant"", ""grant"""
+Security,"""vulnerability"", ""nucleus"", ""Vulnerability"", ""vulnerabilities"", ""DDoS"", ""Wiz"""
+Prod/Test,"""SIT"", ""PROD"", ""environment"", ""testing"", ""demo"", ""test website"""

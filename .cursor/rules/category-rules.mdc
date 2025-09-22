@@ -1,0 +1,68 @@
+---
+description: Issue categorization mapping rules based on keyword matching
+globs:
+alwaysApply: true
+---
+
+# Issue Category Mapping Rules
+
+## Mapping Strategy
+- **Keyword Matching**: Partial/substring matches, case-insensitive
+- **Multiple Matches**: Category with most keyword matches wins
+- **No Matches**: Leave category column blank
+- **Overlapping Keywords**: Flag for manual review
+
+
+## 🏆 PRIORITY RULES
+- **Certificate Priority**: If Certificate category matches AND overlaps/ties with other categories → Always assign "Certificate"
+- **Bank feeds Priority**: If Bank Feeds category matches AND overlaps/ties with other categories → Always assign "Bank Feeds" 
+- **Security Priority**: If Security category matches AND overlaps/ties with other categories → Always assign "Security"
+
+## Category Mapping Rules
+
+### API
+**Keywords**: API, Public API, endpoint, key, rate limiting
+
+### Certificate  
+**Keywords**: certificate, expiry, renewal, thumbprint, TLS, keyvault, DigiCert, certificate install
+
+### Supplier Feeds
+**Keywords**: supplier feed, mapping, ledger, integrator, connection, supplierId, NZ migrations
+
+### Bank Feeds
+**Keywords**: bank feed, Bank Feed, bank feeds
+
+### Prod Errors
+**Keywords**: error, error message, 504, 503, timeout, GatewayTimeout, InternalServerError, fail, 500, critical, unexpected, failures, alert, test failing
+
+### Feature Support
+**Keywords**: consent, Mydot User ID, Administrator, user role, permission, Consent App, OAuthToken, ConsentIsInvalid, scope, TPAM, validation, authorization, company file selection, CanonicalLogs, Canonical, Westpac
+
+### Customer Support
+**Keywords**: publicly available, client, exposed, customer, customer confusion, documentation, IP, IP addresses, Solo
+
+### Other
+**Keywords**: decommission, cleanup, legacy, miscellaneous, improvements, patch, update, DNA key rotation, unit test coverage, infrastructure, version
+
+### Prod/Test
+**Keywords**: SIT, PROD, environment, testing, demo, test website
+
+
+### Release Effort
+**Keywords**: GoCD, deploy, pipeline, release, GoCD agents, decomission, decommission
+
+### Access Requests
+**Keywords**: Grant access, Grant, grant
+
+### Security
+**Keywords**: vulnerability, nucleus, Vulnerability, vulnerabilities, DDoS, Wiz
+
+## Processing Logic
+1. Search text for all keywords (case-insensitive, partial matches)
+2. Count matches per category
+3. If overlap keyword found → FLAG FOR REVIEW
+4. **Certificate Priority Rule**: If Certificate category has matches AND there's overlap/tie with other categories → Always assign "Certificate"
+If Release Effort category has matches AND there's overlap/tie with other categories → Always assign "Release Effort"
+5. If multiple categories match → Select category with highest match count
+6. If no matches → Leave blank
+7. If tie in match count → FLAG FOR REVIEW

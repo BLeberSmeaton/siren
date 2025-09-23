@@ -105,3 +105,44 @@ export interface TriageConfiguration {
   highPriorityCategories: string[];
   categoryDefaultScores: { [key: string]: number };
 }
+
+// Report generation types
+export type ReportPeriod = 'week' | 'fortnight' | 'month' | 'quarter' | 'all-time' | 'custom';
+export type ReportFormat = 'pdf' | 'csv';
+
+export interface ReportConfiguration {
+  period: ReportPeriod;
+  format: ReportFormat;
+  startDate: Date;
+  endDate: Date;
+  includeTeamData: boolean;
+  selectedTeam?: string;
+  customStartDate?: Date;
+  customEndDate?: Date;
+  includeCategories: string[];
+  minimumScore?: number;
+}
+
+export interface ReportData {
+  signals: SupportSignal[];
+  summary: SignalSummary | null;
+  categoryStats: CategoryStats[];
+  teams: TeamSummary[];
+  selectedTeam: TeamConfiguration | null;
+  reportConfig: ReportConfiguration;
+  generatedAt: Date;
+}
+
+export interface ReportMetrics {
+  totalSignals: number;
+  signalsByCategory: { [category: string]: number };
+  averageScore: number;
+  highPriorityCount: number;
+  trendsFromPreviousPeriod: {
+    signalChange: number;
+    scoreChange: number;
+    categoryChanges: { [category: string]: number };
+  };
+  topCategories: { category: string; count: number; change: number }[];
+  criticalSignals: SupportSignal[];
+}

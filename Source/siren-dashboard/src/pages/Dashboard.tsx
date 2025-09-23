@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { SupportSignal, DashboardState } from '../types';
-import { signalsApi, categoriesApi, healthApi } from '../services/api';
+import { signalsApi, categoriesApi, healthApi, teamsApi } from '../services/api';
+import { isTeamsFeatureEnabled } from '../config/features';
 import DashboardSummary from '../components/DashboardSummary';
 import SignalTable from '../components/SignalTable';
 import TriagePanel from '../components/TriagePanel';
@@ -10,6 +11,8 @@ const Dashboard: React.FC = () => {
     signals: [],
     summary: null,
     categoryStats: [],
+    teams: [],
+    selectedTeam: null,
     loading: true,
     error: null,
     selectedCategory: null,
@@ -32,18 +35,24 @@ const Dashboard: React.FC = () => {
         throw new Error('API is not responding. Please ensure the SIREN.API server is running.');
       }
 
-      // Load all dashboard data in parallel
+      // Load core dashboard data in parallel
       const [signals, summary, categoryStats] = await Promise.all([
         signalsApi.getSignals(forceRefresh),
         signalsApi.getSummary(forceRefresh),
         categoriesApi.getCategoryStats(forceRefresh),
       ]);
 
+      // Conditionally load teams data only if the feature is enabled
+      const teams = isTeamsFeatureEnabled() 
+        ? await teamsApi.getTeams(forceRefresh)
+        : [];
+
       setState(prev => ({
         ...prev,
         signals,
         summary,
         categoryStats,
+        teams,
         loading: false,
       }));
     } catch (error) {
@@ -97,6 +106,26 @@ const Dashboard: React.FC = () => {
     setState(prev => ({ ...prev, selectedCategory: category }));
   };
 
+  // Team selection handler - used when teams feature is enabled
+  const handleTeamSelect = async (teamName: string | null) => {
+    if (!teamName) {
+      setState(prev => ({ ...prev, selectedTeam: null }));
+      return;
+    }
+
+    try {
+      const teamConfig = await teamsApi.getTeamConfiguration(teamName);
+      setState(prev => ({ ...prev, selectedTeam: teamConfig }));
+    } catch (error) {
+      console.error('Failed to load team configuration:', error);
+      setState(prev => ({ 
+        ...prev, 
+        selectedTeam: null,
+        error: `Failed to load team configuration for ${teamName}` 
+      }));
+    }
+  };
+
   if (state.error) {
     return (
       <div className="dashboard-error">
@@ -137,6 +166,26 @@ const Dashboard: React.FC = () => {
               🔄 Refresh
             </button>
             
+            {/* Team Selector - Feature Toggle */}
+            {isTeamsFeatureEnabled() && (
+              <div className="team-selector">
+                <label htmlFor="team-select">Select team:</label>
+                <select
+                  id="team-select"
+                  value={state.selectedTeam?.teamName || ''}
+                  onChange={(e) => handleTeamSelect(e.target.value || null)}
+                  disabled={state.loading}
+                >
+                  <option value="">No team selected</option>
+                  {state.teams.map((team) => (
+                    <option key={team.teamName} value={team.teamName}>
+                      {team.displayName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+            
             <div className="category-filter">
               <label htmlFor="category-select">Filter by category:</label>
               <select
@@ -155,6 +204,69 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Team Context Section - Feature Toggle */}
+      {isTeamsFeatureEnabled() && state.selectedTeam && (
+        <div className="team-context-section">
+          <div className="team-context-header">
+            <h2>📋 {state.selectedTeam.displayName} Context</h2>
+            <p>{state.selectedTeam.description}</p>
+          </div>
+          
+          <div className="team-context-details">
+            <div className="team-categories">
+              <h3>Active Categories ({state.selectedTeam.categories.filter(c => c.isActive).length})</h3>
+              <div className="category-tags">
+                {state.selectedTeam.categories
+                  .filter(c => c.isActive)
+                  .map((category) => (
+                    <span 
+                      key={category.name} 
+                      className="category-tag"
+                      style={{ 
+                        backgroundColor: category.color || '#007bff',
+                        color: '#fff',
+                        padding: '4px 8px',
+                        borderRadius: '4px',
+                        fontSize: '0.8em',
+                        margin: '2px'
+                      }}
+                      title={category.description || category.displayName}
+                    >
+                      {category.displayName} (P{category.priority})
+                    </span>
+                  ))}
+              </div>
+            </div>
+            
+            <div className="team-datasources">
+              <h3>Enabled Data Sources ({state.selectedTeam.dataSources.filter(ds => ds.isEnabled).length})</h3>
+              <div className="datasource-list">
+                {state.selectedTeam.dataSources
+                  .filter(ds => ds.isEnabled)
+                  .map((source) => (
+                    <div key={source.name} className="datasource-item">
+                      <span className="datasource-type">{source.sourceType}</span>
+                      <span className="datasource-name">{source.name}</span>
+                      <span className="datasource-categories">
+                        ({source.applicableCategories.length} categories)
+                      </span>
+                    </div>
+                  ))}
+              </div>
+            </div>
+            
+            <div className="team-triage-settings">
+              <h3>Triage Settings</h3>
+              <div className="triage-details">
+                <p><strong>Default Score:</strong> {state.selectedTeam.triageSettings.defaultScore}</p>
+                <p><strong>Manual Scoring:</strong> {state.selectedTeam.triageSettings.enableManualScoring ? 'Enabled' : 'Disabled'}</p>
+                <p><strong>High Priority Categories:</strong> {state.selectedTeam.triageSettings.highPriorityCategories.join(', ')}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <div className="dashboard-content">

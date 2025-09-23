@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { SupportSignal } from '../types';
+import Pagination from './Pagination';
 
 interface SignalTableProps {
   signals: SupportSignal[];
@@ -15,9 +16,32 @@ const SignalTable: React.FC<SignalTableProps> = ({
   selectedCategory, 
   loading = false 
 }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  
   const filteredSignals = selectedCategory 
     ? signals.filter(signal => signal.category === selectedCategory)
     : signals;
+
+  // Reset to first page when signals or category filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [signals, selectedCategory]);
+
+  // Calculate pagination
+  const totalItems = filteredSignals.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentSignals = filteredSignals.slice(startIndex, endIndex);
+  
+  // Calculate display info
+  const showingStart = totalItems === 0 ? 0 : startIndex + 1;
+  const showingEnd = Math.min(endIndex, totalItems);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   if (loading) {
     return (
@@ -32,8 +56,18 @@ const SignalTable: React.FC<SignalTableProps> = ({
       <div className="signal-table-header">
         <h3>Support Signals</h3>
         <div className="signal-count">
-          Showing {filteredSignals.length} signals
-          {selectedCategory && <span className="filter"> filtered by {selectedCategory}</span>}
+          {totalItems === 0 ? (
+            'No signals found'
+          ) : (
+            <>
+              {showingStart === showingEnd ? (
+                `Showing ${showingStart} of ${totalItems} signals`
+              ) : (
+                `Showing ${showingStart}-${showingEnd} of ${totalItems} signals`
+              )}
+              {selectedCategory && <span className="filter"> filtered by {selectedCategory}</span>}
+            </>
+          )}
         </div>
       </div>
       
@@ -49,7 +83,7 @@ const SignalTable: React.FC<SignalTableProps> = ({
         </div>
         
         <div className="table-body">
-          {filteredSignals.map((signal) => (
+          {currentSignals.map((signal) => (
             <div key={signal.id} className="table-row">
               <div className="column signal-title">
                 <div className="title">{signal.title}</div>
@@ -85,6 +119,19 @@ const SignalTable: React.FC<SignalTableProps> = ({
           ))}
         </div>
       </div>
+      
+      {/* Pagination Component */}
+      {totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+          totalItems={totalItems}
+          itemsPerPage={itemsPerPage}
+          showingStart={showingStart}
+          showingEnd={showingEnd}
+        />
+      )}
     </div>
   );
 };

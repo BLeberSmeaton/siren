@@ -1,0 +1,89 @@
+{
+  "teamName": "team-bolt",
+  "displayName": "Team Bolt",
+  "description": "Support team for AccountRight Live and API services",
+  "dataSources": [
+    {
+      "sourceType": "CSV",
+      "name": "Jira Export",
+      "isEnabled": true,
+      "settings": {
+        "filePath": "Data/Processed/Jira_ARLive_categorized.csv",
+        "updateInterval": "daily"
+      },
+      "applicableCategories": ["API", "Certificate", "Supplier Feeds", "Bank Feeds", "Prod Errors", "Feature Support", "Customer Support", "Release Effort", "Access Requests", "Security", "Prod/Test"]
+    },
+    {
+      "sourceType": "Teams",
+      "name": "Support Channel",
+      "isEnabled": false,
+      "settings": {
+        "channelId": "19:team-bolt-support@thread.skype",
+        "keywords": ["incident", "outage", "error", "down"],
+        "pollInterval": "5min"
+      },
+      "applicableCategories": ["Prod Errors", "Security", "Certificate"]
+    }
+  ],
+  "categories": [
+    {
+      "name": "API",
+      "displayName": "API Issues",
+      "description": "Public API, endpoints, rate limiting issues",
+      "keywords": ["API", "Public API", "endpoint", "key", "rate limiting"],
+      "priority": 2,
+      "color": "#FF6B35",
+      "isActive": true
+    },
+    {
+      "name": "Certificate",
+      "displayName": "Certificate Management",
+      "description": "TLS certificates, expiry, renewal issues",
+      "keywords": ["certificate", "expiry", "renewal", "thumbprint", "TLS", "keyvault", "DigiCert", "certificate install"],
+      "priority": 1,
+      "color": "#D32F2F",
+      "isActive": true
+    },
+    {
+      "name": "Bank Feeds",
+      "displayName": "Bank Feed Issues",
+      "description": "Bank feed connection and processing",
+      "keywords": ["bank feed", "Bank Feed", "bank feeds"],
+      "priority": 1,
+      "color": "#1976D2",
+      "isActive": true
+    },
+    {
+      "name": "Prod Errors",
+      "displayName": "Production Errors",
+      "description": "Server errors, timeouts, critical failures",
+      "keywords": ["error", "error message", "504", "503", "timeout", "GatewayTimeout", "InternalServerError", "fail", "500", "critical", "unexpected", "failures", "alert", "test failing"],
+      "priority": 3,
+      "color": "#F44336",
+      "isActive": true
+    },
+    {
+      "name": "Security",
+      "displayName": "Security Issues",
+      "description": "Vulnerabilities, security alerts",
+      "keywords": ["vulnerability", "nucleus", "Vulnerability", "vulnerabilities", "DDoS", "Wiz"],
+      "priority": 1,
+      "color": "#9C27B0",
+      "isActive": true
+    }
+  ],
+  "triageSettings": {
+    "enableManualScoring": true,
+    "defaultScore": 5,
+    "highPriorityCategories": ["Certificate", "Security", "Prod Errors"],
+    "categoryDefaultScores": {
+      "Certificate": 9,
+      "Security": 9,
+      "Prod Errors": 8,
+      "API": 6,
+      "Bank Feeds": 7
+    }
+  },
+  "createdAt": "2025-01-15T00:00:00Z",
+  "updatedAt": "2025-01-15T00:00:00Z"
+}

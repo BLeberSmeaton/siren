@@ -1,20 +1,74 @@
 {
   "silverfin": {
-    "signalId": "silverfin",
-    "manualScore": 7,
+    "signalId": "",
+    "manualScore": null,
     "manualCategory": null,
-    "lastUpdated": "2025-09-23T01:38:19.658732Z"
+    "lastUpdated": "0001-01-01T00:00:00"
   },
   "public-api-tech-rele": {
-    "signalId": "public-api-tech-rele",
-    "manualScore": 8,
+    "signalId": "",
+    "manualScore": null,
     "manualCategory": null,
-    "lastUpdated": "2025-09-23T01:38:37.8522644Z"
+    "lastUpdated": "0001-01-01T00:00:00"
   },
   "emailing-from-api-fa": {
-    "signalId": "emailing-from-api-fa",
+    "signalId": "",
+    "manualScore": null,
+    "manualCategory": null,
+    "lastUpdated": "0001-01-01T00:00:00"
+  },
+  "silverfin-csv-C75": {
+    "signalId": "silverfin-csv-C75",
+    "manualScore": 7,
+    "manualCategory": null,
+    "lastUpdated": "2025-09-23T04:19:28.8874042Z"
+  },
+  "exp-30-aug---ampol-c-csv-464": {
+    "signalId": "exp-30-aug---ampol-c-csv-464",
+    "manualScore": 4,
+    "manualCategory": null,
+    "lastUpdated": "2025-09-23T04:19:41.0680128Z"
+  },
+  "public-api-tech-rele-csv-A08": {
+    "signalId": "public-api-tech-rele-csv-A08",
     "manualScore": 9,
     "manualCategory": null,
-    "lastUpdated": "2025-09-23T01:38:48.2680514Z"
+    "lastUpdated": "2025-09-23T04:19:49.7681579Z"
+  },
+  "grant-access-to-the--csv-38B": {
+    "signalId": "grant-access-to-the--csv-38B",
+    "manualScore": 7,
+    "manualCategory": null,
+    "lastUpdated": "2025-09-23T04:19:56.8259258Z"
+  },
+  "nucleus-vulnerabilit-csv-28B": {
+    "signalId": "nucleus-vulnerabilit-csv-28B",
+    "manualScore": 6,
+    "manualCategory": null,
+    "lastUpdated": "2025-09-23T04:20:41.1933941Z"
+  },
+  "sit-public-api-certi-csv-878": {
+    "signalId": "sit-public-api-certi-csv-878",
+    "manualScore": 6,
+    "manualCategory": null,
+    "lastUpdated": "2025-09-23T04:20:53.5630606Z"
+  },
+  "huxley-api-deploy-ci-csv-543": {
+    "signalId": "huxley-api-deploy-ci-csv-543",
+    "manualScore": 8,
+    "manualCategory": null,
+    "lastUpdated": "2025-09-23T04:21:24.4264509Z"
+  },
+  "slo-alert-for-504-(g-csv-609": {
+    "signalId": "slo-alert-for-504-(g-csv-609",
+    "manualScore": 8,
+    "manualCategory": null,
+    "lastUpdated": "2025-09-23T04:21:39.9525154Z"
+  },
+  "clientid-missing-for-csv-19E": {
+    "signalId": "clientid-missing-for-csv-19E",
+    "manualScore": 8,
+    "manualCategory": null,
+    "lastUpdated": "2025-09-23T04:21:51.6881731Z"
   }
 }

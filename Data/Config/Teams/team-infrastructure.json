@@ -1,0 +1,81 @@
+{
+  "teamName": "team-infrastructure",
+  "displayName": "Infrastructure Team",
+  "description": "Platform operations and infrastructure support",
+  "dataSources": [
+    {
+      "sourceType": "Slack",
+      "name": "Ops Channel",
+      "isEnabled": true,
+      "settings": {
+        "channelId": "C1234567890",
+        "botToken": "xoxb-token-here",
+        "keywords": ["outage", "down", "slow", "performance"],
+        "pollInterval": "2min"
+      },
+      "applicableCategories": ["Performance", "Outage", "Infrastructure", "Database"]
+    },
+    {
+      "sourceType": "Teams",
+      "name": "Infrastructure Alerts",
+      "isEnabled": true,
+      "settings": {
+        "channelId": "19:infra-team@thread.skype",
+        "keywords": ["alert", "cpu", "memory", "disk"],
+        "pollInterval": "1min"
+      },
+      "applicableCategories": ["Performance", "Infrastructure"]
+    }
+  ],
+  "categories": [
+    {
+      "name": "Performance",
+      "displayName": "Performance Issues",
+      "description": "Latency, throughput, resource utilization",
+      "keywords": ["latency", "slow", "performance", "timeout", "cpu", "memory", "disk"],
+      "priority": 1,
+      "color": "#FF9800",
+      "isActive": true
+    },
+    {
+      "name": "Outage",
+      "displayName": "Service Outage",
+      "description": "Complete service unavailability",
+      "keywords": ["outage", "down", "unavailable", "offline", "incident"],
+      "priority": 1,
+      "color": "#F44336",
+      "isActive": true
+    },
+    {
+      "name": "Infrastructure",
+      "displayName": "Infrastructure",
+      "description": "Servers, network, deployment issues",
+      "keywords": ["server", "network", "deployment", "kubernetes", "docker", "infrastructure"],
+      "priority": 2,
+      "color": "#607D8B",
+      "isActive": true
+    },
+    {
+      "name": "Database",
+      "displayName": "Database Issues",
+      "description": "Database connectivity, queries, performance",
+      "keywords": ["database", "sql", "connection", "query", "deadlock", "postgres", "mongodb"],
+      "priority": 2,
+      "color": "#4CAF50",
+      "isActive": true
+    }
+  ],
+  "triageSettings": {
+    "enableManualScoring": true,
+    "defaultScore": 6,
+    "highPriorityCategories": ["Outage", "Performance"],
+    "categoryDefaultScores": {
+      "Outage": 10,
+      "Performance": 8,
+      "Database": 7,
+      "Infrastructure": 6
+    }
+  },
+  "createdAt": "2025-01-15T00:00:00Z",
+  "updatedAt": "2025-01-15T00:00:00Z"
+}

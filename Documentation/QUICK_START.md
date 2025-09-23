@@ -26,19 +26,28 @@ npm start
 
 **✅ You should see**: Browser automatically opens to `http://localhost:3000`
 
-### **Step 3: Experience the Dashboard!** (1 minute)
+### **Result**
+- ✅ **API**: http://localhost:5135 (with Swagger docs)
+- ✅ **Dashboard**: http://localhost:3000 (opens automatically)
+- ✅ **Full Integration**: React → API → SIREN.Core services
 
-#### **🎯 Try the Manual Triage Feature (Innovation Day Highlight)**
+---
+
+## 🎯 **Demo the Innovation**
+
+### **🎯 Try the Manual Triage Feature (Innovation Day Highlight)**
 1. **View Signals**: See auto-categorized support signals in the table
 2. **Click "Triage"**: Opens the human+AI collaboration interface
 3. **Adjust Priority**: Use the slider to set manual priority (1-10)
 4. **Override Category**: Change AI categorization if needed
 5. **Save Triage**: Click "Save Triage" to persist your decisions
 
-#### **📊 Explore the Analytics**
+### **📊 Explore the Analytics**
 - **Summary Cards**: Total signals, categorized count, manual triage progress
 - **Visual Charts**: Bar chart and pie chart showing category distribution
 - **Category Filter**: Use the dropdown to filter signals by category
+
+---
 
 ## 🛠️ **Troubleshooting**
 
@@ -68,6 +77,19 @@ npm start -- --reset-cache
 - ✅ **Check CORS settings** in SIREN.API/Program.cs
 - ✅ **Verify API URL** in `siren-dashboard/src/services/api.ts`
 
+---
+
+## ✅ **Verification Checklist**
+
+- [ ] API server running on port 5135
+- [ ] React app running on port 3000
+- [ ] Dashboard loads with signal data
+- [ ] Triage panel opens when clicking "Triage"
+- [ ] Charts display category distribution
+- [ ] No console errors in browser dev tools
+
+---
+
 ## 🎭 **Demo Script (30 seconds)**
 
 **Perfect for showing to stakeholders:**
@@ -78,27 +100,17 @@ npm start -- --reset-cache
 4. **Use the slider**: *"Priority scoring based on business impact"*
 5. **Show the analytics**: *"Real-time view of our collaborative intelligence"*
 
-## 📋 **What You're Seeing**
+---
 
-### **Real Data Flow**
-- **CSV Provider**: Real sample data from your existing system
-- **CategoryEngine**: Your proven keyword-based categorization working
-- **React Frontend**: Modern interface calling your ASP.NET Core API
-- **Full Integration**: End-to-end from UI → API → Services → Domain Logic
+## 🔄 **Development Commands**
 
-### **Innovation Features**
-- ✅ **Auto-Categorization**: AI working in real-time
-- ✅ **Manual Triage**: Human expertise enhancement
-- ✅ **Visual Analytics**: Data-driven insights
-- ✅ **Responsive Design**: Professional enterprise UI
-
-## 🔄 **Next Actions**
-
-### **For Development**
+### **For Testing**
 ```bash
-# Run tests
-dotnet test SIREN.Core.Tests  # Backend tests
-cd siren-dashboard && npm test  # Frontend tests
+# Run backend tests
+dotnet test SIREN.Core.Tests
+
+# Run frontend tests  
+cd siren-dashboard && npm test
 ```
 
 ### **For Production**
@@ -108,12 +120,17 @@ cd siren-dashboard && npm run build
 cd .. && dotnet publish SIREN.API -c Release
 ```
 
+---
+
 ## 📞 **Need Help?**
 
 - **API Documentation**: Navigate to http://localhost:5135/swagger when API is running
-- **Test Status**: All 17 existing tests should pass: `dotnet test`
-- **Project Structure**: Check `README.md` for complete documentation
-- **Architecture Details**: See `Documentation/DASHBOARD_IMPLEMENTATION_COMPLETE.md`
+- **Test Status**: All tests should pass: `dotnet test`
+- **Project Architecture**: See [`ARCHITECTURE_OVERVIEW.md`](ARCHITECTURE_OVERVIEW.md)
+- **Testing Details**: See [`TESTING_STRATEGY.md`](TESTING_STRATEGY.md)
+- **Development Context**: See [`DEVELOPMENT_GUIDE.md`](DEVELOPMENT_GUIDE.md)
+- **Project Status**: See [`PROJECT_STATUS.md`](PROJECT_STATUS.md)
+- **System Diagrams**: See [`DIAGRAMS.md`](DIAGRAMS.md)
 
 ---
 
@@ -123,7 +140,7 @@ cd .. && dotnet publish SIREN.API -c Release
 
 The SIREN Dashboard showcases:
 - ✅ Modern full-stack development (React + .NET)
-- ✅ Enterprise-grade architecture
+- ✅ Enterprise-grade architecture  
 - ✅ Human+AI collaboration innovation
 - ✅ Professional UI/UX design
 - ✅ Comprehensive testing and documentation

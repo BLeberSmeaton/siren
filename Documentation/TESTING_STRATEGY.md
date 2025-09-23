@@ -228,3 +228,13 @@ npm test -- --coverage --watchAll=false
 ---
 
 **Testing Strategy ensures enterprise-grade quality and deployment confidence for the SIREN platform.**
+
+---
+
+## 📚 **Related Documentation**
+
+- **🚀 [Quick Start Guide](QUICK_START.md)** - Get running and verify tests pass
+- **🏗️ [Architecture Overview](ARCHITECTURE_OVERVIEW.md)** - Technical architecture being tested
+- **💻 [Development Guide](DEVELOPMENT_GUIDE.md)** - Developer context and TDD approach
+- **📊 [Project Status](PROJECT_STATUS.md)** - Current status and test metrics
+- **📊 [System Diagrams](DIAGRAMS.md)** - Visual system components under test

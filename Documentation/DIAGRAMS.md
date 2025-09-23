@@ -291,5 +291,15 @@ journey
 - **Start with**: Human+AI Collaboration Workflow
 - **Show technical depth**: System Architecture
 - **Demonstrate process**: Data Flow Diagram
-- **Prove quality**: Class Diagram + mention 17 passing tests
+- **Prove quality**: Class Diagram + mention 75 passing tests
+
+---
+
+## 📚 **Related Documentation**
+
+- **🚀 [Quick Start Guide](QUICK_START.md)** - Get the system running to see these diagrams in action
+- **🏗️ [Architecture Overview](ARCHITECTURE_OVERVIEW.md)** - Detailed technical implementation of these components
+- **💻 [Development Guide](DEVELOPMENT_GUIDE.md)** - Developer context and project background
+- **📊 [Project Status](PROJECT_STATUS.md)** - Current implementation status and demo readiness
+- **🧪 [Testing Strategy](TESTING_STRATEGY.md)** - Test coverage validating these architectural components
 

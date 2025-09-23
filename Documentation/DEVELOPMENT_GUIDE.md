@@ -1,29 +1,36 @@
-# SIREN Dashboard UI Development Context - COMPLETED ✅
+# 🚀 SIREN Development Guide
 
-## 📋 **PROJECT STATE & FOUNDATION** 
+## 📋 **Project Context & Background**
 
-### **DEVELOPER PROFILE**
+### **Developer Profile**
 - Junior .NET C# developer learning enterprise patterns through practice
-- Strong foundation completed: 17 passing tests, plugin architecture working
-- Focus on **learning through building** with visual feedback
-- ✅ **ACHIEVED**: Professional React + ASP.NET Core dashboard implementation
+- Focus on **test-driven development** and **learning through building**
+- Need both automated test feedback and visual UI feedback as we progress
+- Want guidance on decisions, not just confirmation - help me understand trade-offs
 
-### **CURRENT PROJECT STATUS** ✅ **COMPLETED**
-**Location**: `C:\src\test\Bolt Support Insights\Source\`
+### **Project Overview: "SIREN" (Support Signal Intelligence Response Engine)**
+**Location**: `C:\src\test\Bolt Support Insights\`
 **GitHub**: `https://github.com/BLeberSmeaton/siren.git`
+**Innovation Theme**: Human+AI collaboration - AI handles heavy lifting, humans make strategic decisions
 
-**COMPLETED IMPLEMENTATION**:
-- ✅ **Core Architecture**: Plugin-based with `ISignalProvider`, `ICategorizer` interfaces
-- ✅ **Working Categorization**: CategoryEngine with keyword matching + priority rules
-- ✅ **CSV Provider**: Fully functional with test coverage
-- ✅ **Test Suite**: 17 tests passing (100% success rate)
-- ✅ **Dependency Injection**: Proper service registration setup
-- ✅ **Console Demo**: End-to-end working demonstration
-- ✅ **WEB API**: ASP.NET Core controllers exposing all services
-- ✅ **REACT DASHBOARD**: Professional frontend with Feelix-inspired design
-- ✅ **MANUAL TRIAGE**: Human+AI collaboration interface (Innovation Day feature)
-- ✅ **ANALYTICS**: Recharts integration with visual dashboards
-- ✅ **TESTING**: Complete frontend testing with React Testing Library
+**Current Challenge**: Support teams manually analyze scattered signals across 8+ channels
+**Solution**: Automated signal aggregation + human triage intelligence
+
+---
+
+## 🏗️ **Technical Architecture**
+
+### **Core Components**
+- `ISignalProvider` interface for pluggable data sources
+- `SupportSignal` universal data model
+- JSON-based storage (database migration path planned)
+- Categorization engine (port from existing Python rules)
+- Manual scoring system for human triage
+
+### **Data Sources** (incremental implementation)
+1. **CSV files** (existing categorized data) ✅
+2. **Jira REST API** (eliminate manual exports) ✅
+3. **Teams Graph API** (real-time signals) *planned*
 
 ### **COMPLETED CODEBASE STRUCTURE** ✅
 ```
@@ -38,7 +45,7 @@ Source/
 │   │   └── CsvSignalProvider.cs   # CSV data source
 │   └── Services/
 │       └── CategoryEngine.cs      # Keyword categorization
-├── SIREN.Core.Tests/              # Comprehensive test suite (17 tests ✅)
+├── SIREN.Core.Tests/              # Comprehensive test suite (33 tests ✅)
 ├── SIREN.Console/                 # Working demo application
 ├── SIREN.API/                     # ASP.NET Core Web API (NEW ✅)
 │   ├── Controllers/
@@ -61,7 +68,9 @@ Source/
     └── package.json              # Dependencies & scripts
 ```
 
-## 🎯 **DASHBOARD UI REQUIREMENTS**
+---
+
+## 🎯 **Dashboard UI Requirements**
 
 ### **PRIMARY GOALS** ✅ **ALL COMPLETED**
 1. ✅ **Visual Interface** for support signal triage and analysis
@@ -70,8 +79,7 @@ Source/
 4. ✅ **Analytics View** - category breakdowns, trends, patterns
 5. ✅ **Innovation Day Demo** - impressive, professional interface
 
-### **USER PERSONAS & NEEDS**
-Based on previous analysis:
+### **User Personas & Needs**
 
 **👨‍💻 Support Engineers** (Daily users):
 - Quick signal overview and filtering
@@ -90,23 +98,9 @@ Based on previous analysis:
 - ROI demonstration
 - Strategic pattern insights
 
-### **UI REQUIREMENTS**
+---
 
-#### **Core Views** (MVP):
-1. **Signal List View** - Display categorized support signals
-2. **Analytics Dashboard** - Category breakdowns and metrics
-3. **Manual Triage View** - Human scoring interface (key innovation day feature)
-4. **Signal Detail View** - Individual signal inspection
-
-#### **Key Features**:
-- **Real-time Data Loading** from existing providers
-- **Interactive Categorization** - show AI results + manual override
-- **Filtering & Search** - by category, source, date range
-- **Manual Scoring** - severity/impact sliders or dropdowns
-- **Visual Analytics** - charts showing category distributions
-- **Responsive Design** - works on desktop and mobile
-
-## 🏗️ **TECHNICAL APPROACH** ✅ **IMPLEMENTED**
+## 🏗️ **Technical Implementation**
 
 ### **CHOSEN STACK** ✅ **COMPLETED IMPLEMENTATION**
 **React + Feelix Design System + ASP.NET Core Web API** (Implemented):
@@ -119,18 +113,19 @@ Based on previous analysis:
 ### **INTEGRATION WITH EXISTING CODE**
 ```csharp
 // Your existing services work perfectly with web apps
-public class HomeController : Controller
+public class SignalsController : ControllerBase
 {
     private readonly ISignalProvider _signalProvider;
     private readonly ICategorizer _categorizer;
     
-    public HomeController(ISignalProvider signalProvider, ICategorizer categorizer)
+    public SignalsController(ISignalProvider signalProvider, ICategorizer categorizer)
     {
         _signalProvider = signalProvider;    // Already implemented!
         _categorizer = categorizer;          // Already working!
     }
     
-    public async Task<IActionResult> Index()
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<SupportSignal>>> GetSignals()
     {
         var signals = await _signalProvider.GetSignalsAsync();
         var categorizedSignals = signals.Select(s => {
@@ -138,12 +133,14 @@ public class HomeController : Controller
             return s;
         });
         
-        return View(categorizedSignals);
+        return Ok(categorizedSignals);
     }
 }
 ```
 
-## 📊 **DASHBOARD LAYOUT DESIGN**
+---
+
+## 📊 **Dashboard Layout Design**
 
 ### **Main Dashboard Layout**
 ```
@@ -190,57 +187,33 @@ public class HomeController : Controller
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## 🔧 **DEVELOPMENT APPROACH**
+---
 
-### **PHASE 1: Basic MVC Setup** (1 hour)
-1. **Create ASP.NET Core MVC project** in SIREN solution
-2. **Reference SIREN.Core** project for existing services
-3. **Configure dependency injection** - reuse existing service registration
-4. **Create basic controller** to display signals
-5. **Simple razor view** showing signal list
-
-### **PHASE 2: Core Dashboard** (2 hours)
-1. **Bootstrap integration** for professional styling
-2. **Signal list view** with categorization display
-3. **Basic filtering** (by category, source)
-4. **Summary metrics** (total signals, categories, etc.)
-5. **Responsive layout** working on different screen sizes
-
-### **PHASE 3: Manual Triage** (2 hours) ⭐ **INNOVATION DAY KILLER FEATURE**
-1. **Manual scoring interface** - sliders or dropdowns
-2. **Signal detail modal/page** for in-depth triage
-3. **Save manual scores** (extend SupportSignal model)
-4. **Priority calculation** (automated + manual score)
-5. **Visual priority indicators** (red/yellow/green)
-
-### **PHASE 4: Analytics & Polish** (1 hour)
-1. **Category breakdown charts** - simple bar/pie charts
-2. **Recent activity timeline**
-3. **Export functionality** (CSV download)
-4. **Professional styling** and UX polish
-
-## 📚 **LEARNING OBJECTIVES**
+## 📚 **Learning Objectives**
 
 ### **Web Development Patterns**:
-- **MVC architecture** - separation of concerns
-- **Razor view engine** - server-side rendering
-- **Dependency injection** in web context
-- **Bootstrap integration** - responsive design
-- **Form handling** - POST requests and model binding
+- **Component architecture** - React component composition
+- **TypeScript integration** - Type safety in frontend development
+- **API design** - RESTful service patterns
+- **State management** - React hooks and context
+- **Testing strategies** - Unit, integration, and component testing
 
 ### **UI/UX Concepts**:
 - **Information hierarchy** - most important data prominent
 - **User workflow** - logical flow between views
 - **Visual feedback** - loading states, success messages
-- **Accessibility** - proper HTML semantics
+- **Accessibility** - proper HTML semantics and ARIA labels
+- **Responsive design** - mobile-first approach
 
 ### **Integration Patterns**:
 - **Service layer integration** - web app using domain services
-- **Model transformation** - domain models to view models
+- **Model transformation** - domain models to DTOs
 - **Error handling** - graceful degradation in UI
 - **Testing web apps** - controller testing, integration testing
 
-## 🎯 **SUCCESS CRITERIA** ✅ **ALL ACHIEVED**
+---
+
+## 🎯 **Success Criteria** ✅ **ALL ACHIEVED**
 
 ### **Minimum Viable Dashboard** ✅ **COMPLETED**:
 - ✅ **Working signal list** showing categorized data
@@ -261,28 +234,47 @@ public class HomeController : Controller
 - ✅ **Comprehensive testing** with React Testing Library
 - ✅ **Professional architecture** ready for enterprise deployment
 
-## 🚀 **DEVELOPMENT COMPLETED** ✅
+---
 
-**PROJECT STATUS**: **FULLY IMPLEMENTED AND READY FOR DEMO**
+## 🔧 **Development Workflow**
 
-The SIREN Dashboard has been successfully implemented with:
+### **Getting Started Prompt**
+When starting a new development session, use this context:
 
-### **✅ Complete Architecture**
-- **React Frontend**: Professional TypeScript SPA with Feelix-inspired design
-- **ASP.NET Core Web API**: RESTful backend exposing existing services  
-- **SIREN.Core Integration**: 100% preservation of tested business logic
-- **Comprehensive Testing**: Frontend + backend test coverage
+```
+I'm working on SIREN (Support Signal Intelligence Response Engine) for innovation day. 
 
-### **✅ Innovation Day Features**
-- **Manual Triage Interface**: Human+AI collaboration showcase
-- **Real-time Analytics**: Visual dashboards with Recharts
-- **Professional UI/UX**: Enterprise-grade responsive design
-- **Live Demo Ready**: Both servers configured and working
+I'm a junior .NET developer focused on:
+- Test-driven development practices
+- Learning enterprise patterns through building
+- Human+AI collaboration theme
+- Creating both automated tests and visual feedback
 
-### **🎯 Next Steps**
-1. **Run the demo**: Follow `STARTUP_INSTRUCTIONS.md`  
-2. **Present at Innovation Day**: Use the manual triage feature as the centerpiece
-3. **Future enhancements**: See `DASHBOARD_IMPLEMENTATION_COMPLETE.md` for roadmap
+Current status: Dashboard complete and demo-ready
+Ready to continue development or make enhancements. Where should we focus?
+```
+
+### **Key References**:
+- **Categorization Rules**: `/Data/Config/IssueType.csv`
+- **Sample Data**: `/Data/Processed/Jira_ARLive_categorized.csv`
+- **Legacy Logic**: `/Legacy/dashboard.py` (for reference)
+
+---
+
+## 🚀 **Development Philosophy**
+
+- **Start simple, build incrementally**
+- **Test first, implement second**
+- **Learn through doing, not just reading**
+- **Make mistakes and understand why they're mistakes**
+- **Build something that actually works**
+- **Focus on user experience and business value**
+
+**Current Status**: **FULLY IMPLEMENTED AND READY FOR DEMO** ✅
+
+The foundation is **enterprise-grade** with comprehensive testing, modern architecture, and professional UI. The manual triage feature showcases perfect Human+AI collaboration for Innovation Day presentations.
+
+---
 
 ## 💡 **KEY INTEGRATION POINTS**
 
@@ -292,11 +284,20 @@ The SIREN Dashboard has been successfully implemented with:
 - **`SupportSignal`** - Perfect data model for views
 - **Dependency Injection** - Already configured
 
-### **Extensions Needed**:
-- **`ManualScoring`** class for human triage data
-- **View models** for UI-specific data shaping
-- **Controller actions** for CRUD operations
-- **Razor views** for HTML generation
+### **Extensions Available**:
+- **`ManualTriageService`** - Human triage data persistence
+- **REST API Controllers** - Full CRUD operations
+- **React Components** - Professional UI components
+- **Testing Infrastructure** - Comprehensive test coverage
 
-Your **foundation is solid** - the dashboard will integrate seamlessly with your existing, tested services! 🚀
+Your **foundation is solid** - the system integrates seamlessly with tested, proven services! 🚀
 
+---
+
+## 📚 **Related Documentation**
+
+- **🚀 [Quick Start Guide](QUICK_START.md)** - Get running quickly (2-minute startup)
+- **🏗️ [Architecture Overview](ARCHITECTURE_OVERVIEW.md)** - Technical architecture and implementation details
+- **📊 [Project Status](PROJECT_STATUS.md)** - Current status and demo readiness
+- **🧪 [Testing Strategy](TESTING_STRATEGY.md)** - Comprehensive test coverage details
+- **📊 [System Diagrams](DIAGRAMS.md)** - Visual architecture and data flow diagrams

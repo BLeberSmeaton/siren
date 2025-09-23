@@ -283,12 +283,20 @@ Ready for containerization with Docker Compose for full-stack deployment.
 - [ ] **Multiple Data Sources** - Jira, Teams, ServiceNow integration
 - [ ] **Machine Learning** - Enhanced categorization with ML models
 
-## 📞 **SUPPORT**
+## 📞 **SUPPORT & DOCUMENTATION**
 
-For questions or support:
+### **📚 Quick Access Documentation**
+- **🚀 [Quick Start Guide](Documentation/QUICK_START.md)** - Get running in 2 minutes
+- **📊 [Project Status](Documentation/PROJECT_STATUS.md)** - Current status and demo readiness
+- **🏗️ [Architecture Overview](Documentation/ARCHITECTURE_OVERVIEW.md)** - Complete technical details
+- **💻 [Development Guide](Documentation/DEVELOPMENT_GUIDE.md)** - Developer context and setup
+- **🧪 [Testing Strategy](Documentation/TESTING_STRATEGY.md)** - Test coverage and quality metrics
+- **📊 [System Diagrams](Documentation/DIAGRAMS.md)** - Visual architecture and flow diagrams
+
+### **Getting Help**
 - **GitHub Issues**: [Create an issue](https://github.com/BLeberSmeaton/siren/issues)
-- **Documentation**: Check `Documentation/` folder for detailed guides
 - **Tests**: Run the test suite to verify your setup
+- **API Docs**: Visit `http://localhost:5135/swagger` when running
 
 ---
 

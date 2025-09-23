@@ -5,6 +5,7 @@ import { isTeamsFeatureEnabled } from '../config/features';
 import DashboardSummary from '../components/DashboardSummary';
 import SignalTable from '../components/SignalTable';
 import TriagePanel from '../components/TriagePanel';
+import ReportGenerationModal from '../components/ReportGenerationModal';
 
 const Dashboard: React.FC = () => {
   const [state, setState] = useState<DashboardState>({
@@ -20,6 +21,7 @@ const Dashboard: React.FC = () => {
 
   const [selectedSignal, setSelectedSignal] = useState<SupportSignal | null>(null);
   const [showTriage, setShowTriage] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
 
   useEffect(() => {
     loadDashboardData();
@@ -166,6 +168,14 @@ const Dashboard: React.FC = () => {
               🔄 Refresh
             </button>
             
+            <button 
+              className="action-button primary"
+              onClick={() => setShowReportModal(true)}
+              disabled={state.loading}
+            >
+              📊 Generate Report
+            </button>
+            
             {/* Team Selector - Feature Toggle */}
             {isTeamsFeatureEnabled() && (
               <div className="team-selector">
@@ -297,6 +307,22 @@ const Dashboard: React.FC = () => {
             signal={selectedSignal}
             onClose={handleTriageClose}
             onSignalUpdated={handleSignalUpdated}
+          />
+        </div>
+      )}
+
+      {/* Report Generation Modal */}
+      {showReportModal && (
+        <div className="report-overlay">
+          <ReportGenerationModal
+            dashboardData={{
+              signals: state.signals,
+              summary: state.summary,
+              categoryStats: state.categoryStats,
+              teams: state.teams,
+              selectedTeam: state.selectedTeam
+            }}
+            onClose={() => setShowReportModal(false)}
           />
         </div>
       )}

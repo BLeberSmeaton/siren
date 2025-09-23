@@ -9,6 +9,11 @@ jest.mock('./config/features', () => ({
   isRealtimeUpdatesEnabled: jest.fn(() => false),
 }));
 
+// Mock the report service to avoid browser-specific library imports
+jest.mock('./services/reportService', () => ({
+  generateReport: jest.fn(() => Promise.resolve()),
+}));
+
 // Mock the API module to avoid actual HTTP calls during testing
 jest.mock('./services/api', () => ({
   signalsApi: {

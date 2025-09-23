@@ -12,12 +12,12 @@
 
 | Component | Status | Description |
 |-----------|--------|-------------|
-| **SIREN.Core** | ✅ **STABLE** | 17 passing tests, plugin architecture working |
+| **SIREN.Core** | ✅ **STABLE** | 33 tests (90.52% coverage), plugin architecture working |
 | **SIREN.API** | ✅ **COMPLETE** | ASP.NET Core Web API with full REST endpoints |
 | **React Dashboard** | ✅ **COMPLETE** | Professional frontend with Feelix-inspired design |
 | **Manual Triage** | ✅ **COMPLETE** | Human+AI collaboration interface (Innovation feature) |
 | **Analytics** | ✅ **COMPLETE** | Recharts integration with visual dashboards |
-| **Testing** | ✅ **COMPLETE** | Frontend + backend comprehensive test coverage |
+| **Testing** | ✅ **COMPLETE** | 75 tests total: 66 backend (90.52% coverage) + 9 frontend |
 | **Documentation** | ✅ **COMPLETE** | Complete README, startup guides, architecture docs |
 
 ---

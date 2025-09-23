@@ -27,6 +27,11 @@ builder.Services.AddCors(options =>
 // Register SIREN Core services (same as console app)
 builder.Services.AddTransient<ICategorizer, CategoryEngine>();
 
+// Register configuration service for team management
+var teamsConfigPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "Data", "Config", "Teams");
+builder.Services.AddSingleton<IConfigurationService>(provider => 
+    new ConfigurationService(teamsConfigPath));
+
 // Register manual triage service for persistence
 builder.Services.AddSingleton<IManualTriageService, ManualTriageService>();
 

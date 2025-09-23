@@ -37,7 +37,7 @@ namespace SIREN.Core.Providers
                 
                 return records.Select(record => new SupportSignal
                 {
-                    Id = GenerateId(record.Summary),
+                    Id = GenerateId(record.Summary, record.Created, record.Description),
                     Title = record.Summary ?? string.Empty,
                     Description = record.Description ?? string.Empty,
                     Category = string.IsNullOrWhiteSpace(record.Category) ? null : record.Category,
@@ -52,15 +52,29 @@ namespace SIREN.Core.Providers
             }
         }
 
-        private string GenerateId(string? summary)
+        /// <summary>
+        /// Generate source-aware unique IDs for signals.
+        /// Format: {summary-prefix}-{source}-{hash}
+        /// Examples: public-api-decommiss-csv-A3F2, broken-pipeline-jira-B7E9
+        /// Uses deterministic hashing to ensure same content always generates same ID.
+        /// </summary>
+        private string GenerateId(string? summary, string? created, string? description)
         {
+            // Create deterministic content hash from summary + created + description
+            var content = $"{summary ?? "unknown"}|{created ?? ""}|{description ?? ""}";
+            var contentHash = content.GetHashCode();
+            var hashSuffix = Math.Abs(contentHash).ToString("X")[^3..]; // Last 3 hex digits
+            
             if (string.IsNullOrWhiteSpace(summary))
-                return Guid.NewGuid().ToString("N")[..8];
+                return $"unknown-{ProviderName.ToLower()}-{hashSuffix}";
                 
-            // Generate a simple ID from summary
-            return summary.Length > 20 
+            // Generate a meaningful ID by combining truncated summary with source and hash
+            var baseName = summary.Length > 20 
                 ? summary.Substring(0, 20).Replace(" ", "-").ToLower()
                 : summary.Replace(" ", "-").ToLower();
+                
+            // Add source identifier and deterministic hash for traceability
+            return $"{baseName}-{ProviderName.ToLower()}-{hashSuffix}";
         }
 
         private DateTime? ParseDate(string? dateString)

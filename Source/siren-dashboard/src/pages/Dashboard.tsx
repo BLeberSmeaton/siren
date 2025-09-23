@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { SupportSignal, DashboardState } from '../types';
-import { signalsApi, categoriesApi, healthApi, cacheUtils } from '../services/api';
+import { signalsApi, categoriesApi, healthApi } from '../services/api';
 import DashboardSummary from '../components/DashboardSummary';
 import SignalTable from '../components/SignalTable';
 import TriagePanel from '../components/TriagePanel';
@@ -145,8 +145,8 @@ const Dashboard: React.FC = () => {
                 onChange={(e) => handleCategoryFilter(e.target.value || null)}
               >
                 <option value="">All categories</option>
-                {state.categoryStats.map(stat => (
-                  <option key={stat.category} value={stat.category}>
+                {state.categoryStats.map((stat, index) => (
+                  <option key={`filter-${index}-${stat.category}`} value={stat.category}>
                     {stat.category} ({stat.count})
                   </option>
                 ))}

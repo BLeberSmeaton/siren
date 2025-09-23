@@ -160,8 +160,8 @@ const TriagePanel: React.FC<TriagePanelProps> = ({ signal, onClose, onSignalUpda
               className="category-select"
             >
               <option value="">Select category...</option>
-              {(availableCategories || []).map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
+              {(availableCategories || []).map((cat, index) => (
+                <option key={`triage-cat-${index}-${cat}`} value={cat}>{cat}</option>
               ))}
             </select>
           </div>

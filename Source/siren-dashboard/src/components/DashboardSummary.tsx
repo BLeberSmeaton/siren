@@ -142,8 +142,8 @@ const DashboardSummary: React.FC<DashboardSummaryProps> = ({ summary, categorySt
             <div>Avg Score</div>
             <div>Latest</div>
           </div>
-          {categoryStats.map(stat => (
-            <div key={stat.category} className="table-row">
+          {categoryStats.map((stat, index) => (
+            <div key={`category-${index}-${stat.category}`} className="table-row">
               <div className="category-name">{stat.category}</div>
               <div>{stat.count}</div>
               <div>{stat.manuallyScored}</div>

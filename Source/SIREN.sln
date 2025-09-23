@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SIREN.Console", "SIREN.Cons
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SIREN.API", "SIREN.API\SIREN.API.csproj", "{52D55FE9-7124-4AF2-8470-208E67AF72E9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SIREN.API.Tests", "SIREN.API.Tests\SIREN.API.Tests.csproj", "{5197A807-5949-4B08-8499-6559168C559E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,18 @@ Global
 		{52D55FE9-7124-4AF2-8470-208E67AF72E9}.Release|x64.Build.0 = Release|Any CPU
 		{52D55FE9-7124-4AF2-8470-208E67AF72E9}.Release|x86.ActiveCfg = Release|Any CPU
 		{52D55FE9-7124-4AF2-8470-208E67AF72E9}.Release|x86.Build.0 = Release|Any CPU
+		{5197A807-5949-4B08-8499-6559168C559E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5197A807-5949-4B08-8499-6559168C559E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5197A807-5949-4B08-8499-6559168C559E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5197A807-5949-4B08-8499-6559168C559E}.Debug|x64.Build.0 = Debug|Any CPU
+		{5197A807-5949-4B08-8499-6559168C559E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5197A807-5949-4B08-8499-6559168C559E}.Debug|x86.Build.0 = Debug|Any CPU
+		{5197A807-5949-4B08-8499-6559168C559E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5197A807-5949-4B08-8499-6559168C559E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5197A807-5949-4B08-8499-6559168C559E}.Release|x64.ActiveCfg = Release|Any CPU
+		{5197A807-5949-4B08-8499-6559168C559E}.Release|x64.Build.0 = Release|Any CPU
+		{5197A807-5949-4B08-8499-6559168C559E}.Release|x86.ActiveCfg = Release|Any CPU
+		{5197A807-5949-4B08-8499-6559168C559E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using SIREN.Core.Interfaces;
 using SIREN.Core.Models;
-using SIREN.Core.Services;
 
 namespace SIREN.API.Controllers
 {
@@ -12,13 +11,13 @@ namespace SIREN.API.Controllers
         private readonly ISignalProvider _signalProvider;
         private readonly ICategorizer _categorizer;
         private readonly ILogger<SignalsController> _logger;
-        private readonly ManualTriageService _manualTriageService;
+        private readonly IManualTriageService _manualTriageService;
 
         public SignalsController(
             ISignalProvider signalProvider, 
             ICategorizer categorizer,
             ILogger<SignalsController> logger,
-            ManualTriageService manualTriageService)
+            IManualTriageService manualTriageService)
         {
             _signalProvider = signalProvider;
             _categorizer = categorizer;

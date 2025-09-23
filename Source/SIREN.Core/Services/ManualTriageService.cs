@@ -1,4 +1,5 @@
 using System.Text.Json;
+using SIREN.Core.Interfaces;
 using SIREN.Core.Models;
 
 namespace SIREN.Core.Services
@@ -7,7 +8,7 @@ namespace SIREN.Core.Services
     /// Service to handle persistence of manual triage data (scores and category overrides)
     /// This provides a non-breaking way to persist manual triage without changing the ISignalProvider interface
     /// </summary>
-    public class ManualTriageService
+    public class ManualTriageService : IManualTriageService
     {
         private readonly string _dataPath;
         private readonly Dictionary<string, ManualTriageData> _cache;

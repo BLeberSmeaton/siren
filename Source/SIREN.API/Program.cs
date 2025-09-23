@@ -28,7 +28,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddTransient<ICategorizer, CategoryEngine>();
 
 // Register manual triage service for persistence
-builder.Services.AddSingleton<ManualTriageService>();
+builder.Services.AddSingleton<IManualTriageService, ManualTriageService>();
 
 // Register CSV provider with real data from processed CSV file
 var csvDataPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "Data", "Processed", "Jira_ARLive_categorized.csv");

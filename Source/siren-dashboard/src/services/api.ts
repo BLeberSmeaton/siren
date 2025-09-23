@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { SupportSignal, SignalSummary, CategoryStats, ManualScoreRequest, CategorizeRequest } from '../types';
+import { SupportSignal, SignalSummary, CategoryStats, ManualScoreRequest, CategorizeRequest, TeamSummary, TeamConfiguration } from '../types';
 
 // Configure axios with the API base URL
 const api = axios.create({
@@ -13,7 +13,9 @@ const CACHE_KEYS = {
   SIGNALS: 'siren_signals',
   SUMMARY: 'siren_summary', 
   CATEGORIES: 'siren_categories',
-  CATEGORY_STATS: 'siren_category_stats'
+  CATEGORY_STATS: 'siren_category_stats',
+  TEAMS: 'siren_teams',
+  TEAM_CONFIG: 'siren_team_config'
 } as const;
 
 interface CacheEntry<T> {
@@ -202,6 +204,52 @@ export const healthApi = {
       console.error('Health check failed:', error);
       return false;
     }
+  },
+};
+
+// Teams API endpoints
+export const teamsApi = {
+  // Get all available teams (cached)
+  getTeams: async (forceRefresh = false): Promise<TeamSummary[]> => {
+    if (!forceRefresh) {
+      const cached = getCachedData<TeamSummary[]>(CACHE_KEYS.TEAMS);
+      if (cached) {
+        console.log('Using cached teams data');
+        return cached;
+      }
+    }
+    
+    const response = await api.get<TeamSummary[]>('/teams');
+    setCachedData(CACHE_KEYS.TEAMS, response.data);
+    return response.data;
+  },
+
+  // Get detailed team configuration (cached per team)
+  getTeamConfiguration: async (teamName: string, forceRefresh = false): Promise<TeamConfiguration> => {
+    const cacheKey = `${CACHE_KEYS.TEAM_CONFIG}_${teamName}`;
+    
+    if (!forceRefresh) {
+      const cached = getCachedData<TeamConfiguration>(cacheKey);
+      if (cached) {
+        console.log(`Using cached team configuration for ${teamName}`);
+        return cached;
+      }
+    }
+    
+    const response = await api.get<TeamConfiguration>(`/teams/${teamName}`);
+    setCachedData(cacheKey, response.data);
+    return response.data;
+  },
+
+  // Update team configuration (clears team cache)
+  updateTeamConfiguration: async (teamName: string, configuration: TeamConfiguration): Promise<TeamConfiguration> => {
+    const response = await api.put<TeamConfiguration>(`/teams/${teamName}`, configuration);
+    
+    // Clear relevant team caches
+    clearCache(CACHE_KEYS.TEAMS);
+    clearCache(`${CACHE_KEYS.TEAM_CONFIG}_${teamName}`);
+    
+    return response.data;
   },
 };
 

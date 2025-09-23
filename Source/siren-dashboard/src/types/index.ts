@@ -45,6 +45,8 @@ export interface DashboardState {
   signals: SupportSignal[];
   summary: SignalSummary | null;
   categoryStats: CategoryStats[];
+  teams: TeamSummary[];
+  selectedTeam: TeamConfiguration | null;
   loading: boolean;
   error: string | null;
   selectedCategory: string | null;
@@ -56,4 +58,50 @@ export interface TriageState {
   manualScore: number;
   manualCategory: string;
   triageNotes: string;
+}
+
+// Team configuration types
+export interface TeamSummary {
+  teamName: string;
+  displayName: string;
+  description?: string;
+  activeCategoriesCount: number;
+  enabledDataSourcesCount: number;
+  updatedAt: string;
+}
+
+export interface TeamConfiguration {
+  teamName: string;
+  displayName: string;
+  description?: string;
+  dataSources: DataSourceConfiguration[];
+  categories: CategoryConfiguration[];
+  triageSettings: TriageConfiguration;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface DataSourceConfiguration {
+  sourceType: string;
+  name: string;
+  isEnabled: boolean;
+  settings: { [key: string]: string };
+  applicableCategories: string[];
+}
+
+export interface CategoryConfiguration {
+  name: string;
+  displayName: string;
+  description?: string;
+  keywords: string[];
+  priority: number;
+  color?: string;
+  isActive: boolean;
+}
+
+export interface TriageConfiguration {
+  enableManualScoring: boolean;
+  defaultScore: number;
+  highPriorityCategories: string[];
+  categoryDefaultScores: { [key: string]: number };
 }

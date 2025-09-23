@@ -3,6 +3,13 @@ import { render, screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Dashboard from '../pages/Dashboard';
 
+// Mock the feature flags - teams feature disabled by default for tests
+jest.mock('../config/features', () => ({
+  isTeamsFeatureEnabled: jest.fn(() => false),
+  isAdvancedFilteringEnabled: jest.fn(() => true),
+  isRealtimeUpdatesEnabled: jest.fn(() => false),
+}));
+
 // Mock the API module to avoid actual HTTP calls during testing
 jest.mock('../services/api', () => ({
   signalsApi: {
@@ -17,6 +24,11 @@ jest.mock('../services/api', () => ({
   },
   healthApi: {
     checkHealth: jest.fn(),
+  },
+  teamsApi: {
+    getTeams: jest.fn(),
+    getTeamConfiguration: jest.fn(),
+    updateTeamConfiguration: jest.fn(),
   },
   cacheUtils: {
     clearAllCache: jest.fn(),
@@ -55,8 +67,20 @@ const mockCategoryStats = [
   },
 ];
 
-// Import the mocked API functions
-import { signalsApi, categoriesApi, healthApi } from '../services/api';
+const mockTeams = [
+  {
+    teamName: 'team-bolt',
+    displayName: 'Team Bolt',
+    description: 'Support team for AccountRight Live and API services',
+    activeCategoriesCount: 3,
+    enabledDataSourcesCount: 2,
+    updatedAt: '2023-09-22T10:00:00Z',
+  },
+];
+
+// Import the mocked API functions and feature flags
+import { signalsApi, categoriesApi, healthApi, teamsApi } from '../services/api';
+import { isTeamsFeatureEnabled } from '../config/features';
 
 describe('Dashboard', () => {
   beforeEach(() => {
@@ -72,6 +96,10 @@ describe('Dashboard', () => {
     (signalsApi.getSummary as jest.Mock).mockResolvedValue(mockSummary);
     (categoriesApi.getCategoryStats as jest.Mock).mockResolvedValue(mockCategoryStats);
     (categoriesApi.getCategories as jest.Mock).mockResolvedValue(['Test Category']);
+    (teamsApi.getTeams as jest.Mock).mockResolvedValue(mockTeams);
+    
+    // Reset feature flags to default state (teams disabled)
+    (isTeamsFeatureEnabled as jest.Mock).mockReturnValue(false);
   });
 
   afterEach(() => {

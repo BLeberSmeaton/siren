@@ -2,6 +2,13 @@ import React from 'react';
 import { render, screen, waitFor, act } from '@testing-library/react';
 import App from './App';
 
+// Mock the feature flags - teams feature disabled by default for tests
+jest.mock('./config/features', () => ({
+  isTeamsFeatureEnabled: jest.fn(() => false),
+  isAdvancedFilteringEnabled: jest.fn(() => true),
+  isRealtimeUpdatesEnabled: jest.fn(() => false),
+}));
+
 // Mock the API module to avoid actual HTTP calls during testing
 jest.mock('./services/api', () => ({
   signalsApi: {
@@ -17,6 +24,11 @@ jest.mock('./services/api', () => ({
   healthApi: {
     checkHealth: jest.fn(),
   },
+  teamsApi: {
+    getTeams: jest.fn(),
+    getTeamConfiguration: jest.fn(),
+    updateTeamConfiguration: jest.fn(),
+  },
   cacheUtils: {
     clearAllCache: jest.fn(),
     clearSpecificCache: jest.fn(),
@@ -25,7 +37,7 @@ jest.mock('./services/api', () => ({
 }));
 
 // Import the mocked API functions
-import { signalsApi, categoriesApi, healthApi } from './services/api';
+import { signalsApi, categoriesApi, healthApi, teamsApi } from './services/api';
 
 describe('App', () => {
   beforeEach(() => {
@@ -47,6 +59,7 @@ describe('App', () => {
     });
     (categoriesApi.getCategoryStats as jest.Mock).mockResolvedValue([]);
     (categoriesApi.getCategories as jest.Mock).mockResolvedValue([]);
+    (teamsApi.getTeams as jest.Mock).mockResolvedValue([]);
   });
 
   afterEach(() => {

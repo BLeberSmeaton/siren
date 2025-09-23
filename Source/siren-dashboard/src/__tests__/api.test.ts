@@ -1,4 +1,4 @@
-import { signalsApi, categoriesApi, healthApi } from '../services/api';
+import { signalsApi, categoriesApi, healthApi, teamsApi } from '../services/api';
 
 // Mock axios to avoid actual HTTP requests during testing
 jest.mock('axios', () => ({
@@ -30,5 +30,11 @@ describe('API Services', () => {
 
   test('healthApi exports health check function', () => {
     expect(healthApi).toHaveProperty('checkHealth');
+  });
+
+  test('teamsApi exports all required functions', () => {
+    expect(teamsApi).toHaveProperty('getTeams');
+    expect(teamsApi).toHaveProperty('getTeamConfiguration');
+    expect(teamsApi).toHaveProperty('updateTeamConfiguration');
   });
 });

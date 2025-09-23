@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SIREN.Core.Interfaces;
 using SIREN.Core.Models;
+using SIREN.Core.Services;
 
 namespace SIREN.API.Controllers
 {
@@ -11,15 +12,18 @@ namespace SIREN.API.Controllers
         private readonly ISignalProvider _signalProvider;
         private readonly ICategorizer _categorizer;
         private readonly ILogger<CategoriesController> _logger;
+        private readonly ManualTriageService _manualTriageService;
 
         public CategoriesController(
             ISignalProvider signalProvider,
             ICategorizer categorizer,
-            ILogger<CategoriesController> logger)
+            ILogger<CategoriesController> logger,
+            ManualTriageService manualTriageService)
         {
             _signalProvider = signalProvider;
             _categorizer = categorizer;
             _logger = logger;
+            _manualTriageService = manualTriageService;
         }
 
         /// <summary>
@@ -77,6 +81,9 @@ namespace SIREN.API.Controllers
                         signal.Category = _categorizer.CategorizeSignal(signal);
                     }
                 }
+                
+                // Apply manual triage data for accurate category statistics
+                signalList = _manualTriageService.ApplyManualTriageData(signalList).ToList();
 
                 var categoryStats = signalList
                     .Where(s => !string.IsNullOrEmpty(s.Category))
@@ -128,6 +135,11 @@ namespace SIREN.API.Controllers
                 else
                 {
                     signal.Category = request.Category;
+                    // Persist manual category override
+                    if (!string.IsNullOrEmpty(request.Category))
+                    {
+                        await _manualTriageService.UpdateManualCategoryAsync(signalId, request.Category);
+                    }
                 }
 
                 _logger.LogInformation("Signal {SignalId} categorized as {Category} (manual: {IsManual})", 

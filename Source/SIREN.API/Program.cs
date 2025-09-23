@@ -27,19 +27,16 @@ builder.Services.AddCors(options =>
 // Register SIREN Core services (same as console app)
 builder.Services.AddTransient<ICategorizer, CategoryEngine>();
 
-// Register CSV provider with sample data (we'll make this configurable later)
-var sampleCsvData = """
-    Summary,Created,Updated,Description,Category
-    Certificate expiry notification,22/08/2025 10:21,25/08/2025 14:24,TLS certificate needs renewal in keyvault,
-    Bank feed connection issue,18/08/2025 21:29,25/08/2025 11:16,Customer unable to connect bank feeds properly,
-    API rate limiting error,14/08/2025 09:57,19/08/2025 13:51,Client API key has exceeded the per-second rate limit,
-    Security vulnerability found,14/08/2025 08:41,25/08/2025 14:25,Wiz detected vulnerability in the system,
-    User login failures spike,20/08/2025 15:30,26/08/2025 09:15,Multiple users reporting authentication issues,
-    Database connection timeout,19/08/2025 11:45,24/08/2025 16:20,Connection pool exhausted during peak hours,
-    """;
+// Register manual triage service for persistence
+builder.Services.AddSingleton<ManualTriageService>();
+
+// Register CSV provider with real data from processed CSV file
+var csvDataPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "Data", "Processed", "Jira_ARLive_categorized.csv");
+var csvData = File.Exists(csvDataPath) ? File.ReadAllText(csvDataPath) : 
+    throw new FileNotFoundException($"CSV data file not found at: {csvDataPath}");
 
 builder.Services.AddSingleton<ISignalProvider>(provider => 
-    new CsvSignalProvider(sampleCsvData));
+    new CsvSignalProvider(csvData));
 
 var app = builder.Build();
 

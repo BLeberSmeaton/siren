@@ -1,0 +1,20 @@
+{
+  "silverfin": {
+    "signalId": "silverfin",
+    "manualScore": 7,
+    "manualCategory": null,
+    "lastUpdated": "2025-09-23T01:38:19.658732Z"
+  },
+  "public-api-tech-rele": {
+    "signalId": "public-api-tech-rele",
+    "manualScore": 8,
+    "manualCategory": null,
+    "lastUpdated": "2025-09-23T01:38:37.8522644Z"
+  },
+  "emailing-from-api-fa": {
+    "signalId": "emailing-from-api-fa",
+    "manualScore": 9,
+    "manualCategory": null,
+    "lastUpdated": "2025-09-23T01:38:48.2680514Z"
+  }
+}

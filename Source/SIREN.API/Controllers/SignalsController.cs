@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SIREN.Core.Interfaces;
 using SIREN.Core.Models;
+using SIREN.Core.Services;
 
 namespace SIREN.API.Controllers
 {
@@ -11,15 +12,18 @@ namespace SIREN.API.Controllers
         private readonly ISignalProvider _signalProvider;
         private readonly ICategorizer _categorizer;
         private readonly ILogger<SignalsController> _logger;
+        private readonly ManualTriageService _manualTriageService;
 
         public SignalsController(
             ISignalProvider signalProvider, 
             ICategorizer categorizer,
-            ILogger<SignalsController> logger)
+            ILogger<SignalsController> logger,
+            ManualTriageService manualTriageService)
         {
             _signalProvider = signalProvider;
             _categorizer = categorizer;
             _logger = logger;
+            _manualTriageService = manualTriageService;
         }
 
         /// <summary>
@@ -43,6 +47,9 @@ namespace SIREN.API.Controllers
                         signal.Category = _categorizer.CategorizeSignal(signal);
                     }
                 }
+                
+                // Apply manual triage data (scores and category overrides)
+                signalList = _manualTriageService.ApplyManualTriageData(signalList).ToList();
 
                 _logger.LogInformation("Successfully loaded and categorized {Count} signals", signalList.Count);
                 return Ok(signalList);
@@ -101,7 +108,10 @@ namespace SIREN.API.Controllers
                     return NotFound($"Signal with ID '{id}' not found");
                 }
 
-                // Update manual score
+                // Persist manual score using the triage service
+                await _manualTriageService.UpdateManualScoreAsync(id, request.Score);
+                
+                // Update the signal object with the new score
                 signal.ManualScore = request.Score;
 
                 _logger.LogInformation("Updated manual score for signal {SignalId} to {Score}", id, request.Score);
@@ -167,6 +177,9 @@ namespace SIREN.API.Controllers
                         signal.Category = _categorizer.CategorizeSignal(signal);
                     }
                 }
+                
+                // Apply manual triage data for accurate statistics
+                signalList = _manualTriageService.ApplyManualTriageData(signalList).ToList();
 
                 var summary = new SignalSummary
                 {

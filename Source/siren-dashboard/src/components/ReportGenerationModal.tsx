@@ -474,15 +474,6 @@ const ReportGenerationModal: React.FC<ReportGenerationModalProps> = ({
           {getPreviewContent()}
         </div>
 
-        <div className="target-audience">
-          <h4>👔 Ideal for:</h4>
-          <div className="audience-tags">
-            <span className="audience-tag">Business Analysts</span>
-            <span className="audience-tag">Engineering Managers</span>
-            <span className="audience-tag">Delivery Managers</span>
-            <span className="audience-tag">Product Managers</span>
-          </div>
-        </div>
       </div>
 
       <div className="modal-actions">

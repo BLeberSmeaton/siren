@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import App from './App';
 
 // Mock the API module to avoid actual HTTP calls during testing
@@ -17,6 +17,11 @@ jest.mock('./services/api', () => ({
   healthApi: {
     checkHealth: jest.fn(),
   },
+  cacheUtils: {
+    clearAllCache: jest.fn(),
+    clearSpecificCache: jest.fn(),
+    getCacheKeys: jest.fn(),
+  },
 }));
 
 // Import the mocked API functions
@@ -26,6 +31,11 @@ describe('App', () => {
   beforeEach(() => {
     // Reset mocks and set up default responses
     jest.clearAllMocks();
+    
+    // Clear localStorage to avoid cache interference between tests
+    localStorage.clear();
+    
+    // Set up successful API responses by default
     (healthApi.checkHealth as jest.Mock).mockResolvedValue(true);
     (signalsApi.getSignals as jest.Mock).mockResolvedValue([]);
     (signalsApi.getSummary as jest.Mock).mockResolvedValue({
@@ -39,14 +49,21 @@ describe('App', () => {
     (categoriesApi.getCategories as jest.Mock).mockResolvedValue([]);
   });
 
+  afterEach(() => {
+    // Clean up after each test
+    localStorage.clear();
+    jest.clearAllMocks();
+  });
+
   test('renders SIREN dashboard', async () => {
-    render(<App />);
+    await act(async () => {
+      render(<App />);
+    });
     
     // Wait for the dashboard to load and check for the main header
     await waitFor(() => {
       expect(screen.getByText('🚨 SIREN Dashboard')).toBeInTheDocument();
+      expect(screen.getByText('Support Signal Intelligence Response Engine')).toBeInTheDocument();
     });
-    
-    expect(screen.getByText('Support Signal Intelligence Response Engine')).toBeInTheDocument();
   });
 });

@@ -58,6 +58,9 @@ const TriagePanel: React.FC<TriagePanelProps> = ({ signal, onClose, onSignalUpda
       
       // Show success message (in a real app, you'd use a toast/notification)
       alert('Manual triage completed successfully!');
+      
+      // Close the modal after successful save
+      onClose();
     } catch (error) {
       console.error('Failed to save triage:', error);
       alert('Failed to save triage. Please try again.');

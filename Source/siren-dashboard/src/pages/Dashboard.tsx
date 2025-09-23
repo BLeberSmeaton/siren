@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { SupportSignal, SignalSummary, CategoryStats, DashboardState } from '../types';
-import { signalsApi, categoriesApi, healthApi } from '../services/api';
+import { SupportSignal, DashboardState } from '../types';
+import { signalsApi, categoriesApi, healthApi, cacheUtils } from '../services/api';
 import DashboardSummary from '../components/DashboardSummary';
 import SignalTable from '../components/SignalTable';
 import TriagePanel from '../components/TriagePanel';
@@ -22,7 +22,7 @@ const Dashboard: React.FC = () => {
     loadDashboardData();
   }, []);
 
-  const loadDashboardData = async () => {
+  const loadDashboardData = async (forceRefresh = false) => {
     setState(prev => ({ ...prev, loading: true, error: null }));
 
     try {
@@ -34,9 +34,9 @@ const Dashboard: React.FC = () => {
 
       // Load all dashboard data in parallel
       const [signals, summary, categoryStats] = await Promise.all([
-        signalsApi.getSignals(),
-        signalsApi.getSummary(),
-        categoriesApi.getCategoryStats(),
+        signalsApi.getSignals(forceRefresh),
+        signalsApi.getSummary(forceRefresh),
+        categoriesApi.getCategoryStats(forceRefresh),
       ]);
 
       setState(prev => ({
@@ -66,15 +66,31 @@ const Dashboard: React.FC = () => {
     setShowTriage(false);
   };
 
-  const handleSignalUpdated = (updatedSignal: SupportSignal) => {
-    // Update the signal in the list
+  const handleSignalUpdated = async (updatedSignal: SupportSignal) => {
+    // Update the signal in the list immediately
     setState(prev => ({
       ...prev,
       signals: prev.signals.map(s => s.id === updatedSignal.id ? updatedSignal : s),
     }));
     
-    // Refresh summary data
-    loadDashboardData();
+    // Only refresh summary and category stats (these are affected by signal changes)
+    // Don't reload all signals since we just updated the specific one
+    try {
+      const [summary, categoryStats] = await Promise.all([
+        signalsApi.getSummary(true), // Force refresh
+        categoriesApi.getCategoryStats(true), // Force refresh
+      ]);
+
+      setState(prev => ({
+        ...prev,
+        summary,
+        categoryStats,
+      }));
+    } catch (error) {
+      console.error('Failed to refresh summary data:', error);
+      // Fallback to full reload only if partial refresh fails
+      loadDashboardData();
+    }
   };
 
   const handleCategoryFilter = (category: string | null) => {
@@ -90,7 +106,7 @@ const Dashboard: React.FC = () => {
           <div className="error-actions">
             <button 
               className="action-button primary"
-              onClick={loadDashboardData}
+              onClick={() => loadDashboardData(true)}
             >
               🔄 Retry
             </button>
@@ -115,7 +131,7 @@ const Dashboard: React.FC = () => {
           <div className="header-actions">
             <button 
               className="action-button secondary"
-              onClick={loadDashboardData}
+              onClick={() => loadDashboardData(true)}
               disabled={state.loading}
             >
               🔄 Refresh
@@ -156,7 +172,7 @@ const Dashboard: React.FC = () => {
           <SignalTable
             signals={state.signals}
             onSignalSelect={handleSignalSelect}
-            selectedCategory={state.selectedCategory}
+            selectedCategory={state.selectedCategory || undefined}
             loading={state.loading}
           />
         </section>

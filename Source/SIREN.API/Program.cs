@@ -8,6 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
+// Add Swagger/OpenAPI documentation services
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 // Add CORS for React frontend
 builder.Services.AddCors(options =>
 {
@@ -43,6 +47,12 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "SIREN API V1");
+        c.RoutePrefix = "swagger"; // Makes Swagger available at /swagger
+    });
 }
 
 app.UseHttpsRedirection();

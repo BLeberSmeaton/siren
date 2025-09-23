@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Dashboard from '../pages/Dashboard';
 
@@ -17,6 +17,11 @@ jest.mock('../services/api', () => ({
   },
   healthApi: {
     checkHealth: jest.fn(),
+  },
+  cacheUtils: {
+    clearAllCache: jest.fn(),
+    clearSpecificCache: jest.fn(),
+    getCacheKeys: jest.fn(),
   },
 }));
 
@@ -57,6 +62,11 @@ describe('Dashboard', () => {
   beforeEach(() => {
     // Reset mocks and set up default responses
     jest.clearAllMocks();
+    
+    // Clear localStorage to avoid cache interference between tests
+    localStorage.clear();
+    
+    // Set up successful API responses by default
     (healthApi.checkHealth as jest.Mock).mockResolvedValue(true);
     (signalsApi.getSignals as jest.Mock).mockResolvedValue(mockSignals);
     (signalsApi.getSummary as jest.Mock).mockResolvedValue(mockSummary);
@@ -64,16 +74,28 @@ describe('Dashboard', () => {
     (categoriesApi.getCategories as jest.Mock).mockResolvedValue(['Test Category']);
   });
 
+  afterEach(() => {
+    // Clean up after each test
+    localStorage.clear();
+    jest.clearAllMocks();
+  });
+
   test('renders dashboard header', async () => {
-    render(<Dashboard />);
+    await act(async () => {
+      render(<Dashboard />);
+    });
     
-    // Check if the main heading is rendered
-    expect(screen.getByText('🚨 SIREN Dashboard')).toBeInTheDocument();
-    expect(screen.getByText('Support Signal Intelligence Response Engine')).toBeInTheDocument();
+    // Wait for async operations to complete
+    await waitFor(() => {
+      expect(screen.getByText('🚨 SIREN Dashboard')).toBeInTheDocument();
+      expect(screen.getByText('Support Signal Intelligence Response Engine')).toBeInTheDocument();
+    });
   });
 
   test('loads and displays signals', async () => {
-    render(<Dashboard />);
+    await act(async () => {
+      render(<Dashboard />);
+    });
     
     // Wait for API calls to complete and data to be displayed
     await waitFor(() => {
@@ -88,7 +110,9 @@ describe('Dashboard', () => {
   });
 
   test('displays summary statistics', async () => {
-    render(<Dashboard />);
+    await act(async () => {
+      render(<Dashboard />);
+    });
     
     await waitFor(() => {
       expect(screen.getByText('Total Signals')).toBeInTheDocument();
@@ -101,7 +125,9 @@ describe('Dashboard', () => {
     // Mock API to simulate error
     (healthApi.checkHealth as jest.Mock).mockResolvedValue(false);
     
-    render(<Dashboard />);
+    await act(async () => {
+      render(<Dashboard />);
+    });
     
     await waitFor(() => {
       expect(screen.getByText('🚨 Connection Error')).toBeInTheDocument();
@@ -109,7 +135,9 @@ describe('Dashboard', () => {
   });
 
   test('opens triage panel when signal is selected', async () => {
-    render(<Dashboard />);
+    await act(async () => {
+      render(<Dashboard />);
+    });
     
     // Wait for signals to load
     await waitFor(() => {
@@ -118,7 +146,9 @@ describe('Dashboard', () => {
     
     // Click the triage button
     const triageButton = screen.getByText('Triage');
-    await userEvent.click(triageButton);
+    await act(async () => {
+      await userEvent.click(triageButton);
+    });
     
     // Check if triage panel opens
     await waitFor(() => {

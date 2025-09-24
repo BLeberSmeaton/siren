@@ -10,8 +10,7 @@ namespace SIREN.API.Tests.Controllers
 {
     public class SignalsControllerTests
     {
-        private readonly Mock<ISignalProvider> _mockSignalProvider;
-        private readonly Mock<ICategorizer> _mockCategorizer;
+        private readonly Mock<ISignalOrchestrator> _mockSignalOrchestrator;
         private readonly Mock<ILogger<SignalsController>> _mockLogger;
         private readonly Mock<IManualTriageService> _mockManualTriageService;
         private readonly SignalsController _controller;
@@ -20,14 +19,12 @@ namespace SIREN.API.Tests.Controllers
 
         public SignalsControllerTests()
         {
-            _mockSignalProvider = new Mock<ISignalProvider>();
-            _mockCategorizer = new Mock<ICategorizer>();
+            _mockSignalOrchestrator = new Mock<ISignalOrchestrator>();
             _mockLogger = new Mock<ILogger<SignalsController>>();
             _mockManualTriageService = new Mock<IManualTriageService>();
             
             _controller = new SignalsController(
-                _mockSignalProvider.Object,
-                _mockCategorizer.Object,
+                _mockSignalOrchestrator.Object,
                 _mockLogger.Object,
                 _mockManualTriageService.Object);
 
@@ -71,12 +68,15 @@ namespace SIREN.API.Tests.Controllers
         public async Task GetSignals_ShouldReturnOkWithSignals_WhenSuccessful()
         {
             // Arrange
-            _mockSignalProvider.Setup(x => x.GetSignalsAsync())
-                .ReturnsAsync(_sampleSignals);
-            _mockCategorizer.Setup(x => x.CategorizeSignal(It.IsAny<SupportSignal>()))
-                .Returns("Auto Category");
-            _mockManualTriageService.Setup(x => x.ApplyManualTriageData(It.IsAny<IEnumerable<SupportSignal>>()))
-                .Returns<IEnumerable<SupportSignal>>(signals => signals);
+            var processedSignals = new List<SupportSignal>
+            {
+                new SupportSignal { Id = "signal-1", Title = "Test 1", Description = "Desc 1", Source = "Test", Timestamp = DateTime.UtcNow, Category = "Auto Category" },
+                new SupportSignal { Id = "signal-2", Title = "Test 2", Description = "Desc 2", Source = "Test", Timestamp = DateTime.UtcNow, Category = "Existing Category" },
+                new SupportSignal { Id = "signal-3", Title = "Test 3", Description = "Desc 3", Source = "Test", Timestamp = DateTime.UtcNow, Category = "Auto Category", ManualScore = 7.5 }
+            };
+            
+            _mockSignalOrchestrator.Setup(x => x.GetProcessedSignalsAsync())
+                .ReturnsAsync(processedSignals);
 
             // Act
             var result = await _controller.GetSignals();
@@ -86,36 +86,30 @@ namespace SIREN.API.Tests.Controllers
             var signals = Assert.IsAssignableFrom<List<SupportSignal>>(okResult.Value);
             Assert.Equal(3, signals.Count);
             
-            // Verify auto-categorization was applied to signals without categories
-            Assert.Equal("Auto Category", signals[0].Category);
-            Assert.Equal("Existing Category", signals[1].Category); // Should remain unchanged
-            Assert.Equal("Auto Category", signals[2].Category);
+            // Verify orchestrator was called
+            _mockSignalOrchestrator.Verify(x => x.GetProcessedSignalsAsync(), Times.Once);
         }
 
         [Fact]
-        public async Task GetSignals_ShouldCallManualTriageService_WhenProcessingSignals()
+        public async Task GetSignals_ShouldCallOrchestrator_WhenProcessingSignals()
         {
             // Arrange
-            _mockSignalProvider.Setup(x => x.GetSignalsAsync())
+            _mockSignalOrchestrator.Setup(x => x.GetProcessedSignalsAsync())
                 .ReturnsAsync(_sampleSignals);
-            _mockCategorizer.Setup(x => x.CategorizeSignal(It.IsAny<SupportSignal>()))
-                .Returns("Auto Category");
-            _mockManualTriageService.Setup(x => x.ApplyManualTriageData(It.IsAny<IEnumerable<SupportSignal>>()))
-                .Returns<IEnumerable<SupportSignal>>(signals => signals);
 
             // Act
             await _controller.GetSignals();
 
             // Assert
-            _mockManualTriageService.Verify(x => x.ApplyManualTriageData(It.IsAny<IEnumerable<SupportSignal>>()), Times.Once);
+            _mockSignalOrchestrator.Verify(x => x.GetProcessedSignalsAsync(), Times.Once);
         }
 
         [Fact]
         public async Task GetSignals_ShouldReturn500_WhenExceptionOccurs()
         {
             // Arrange
-            _mockSignalProvider.Setup(x => x.GetSignalsAsync())
-                .ThrowsAsync(new Exception("Database error"));
+            _mockSignalOrchestrator.Setup(x => x.GetProcessedSignalsAsync())
+                .ThrowsAsync(new Exception("Orchestrator error"));
 
             // Act
             var result = await _controller.GetSignals();
@@ -135,10 +129,18 @@ namespace SIREN.API.Tests.Controllers
         {
             // Arrange
             var signalId = "signal-1";
-            _mockSignalProvider.Setup(x => x.GetSignalsAsync())
-                .ReturnsAsync(_sampleSignals);
-            _mockCategorizer.Setup(x => x.CategorizeSignal(It.IsAny<SupportSignal>()))
-                .Returns("Auto Category");
+            var expectedSignal = new SupportSignal
+            {
+                Id = signalId,
+                Title = "Test Signal 1",
+                Description = "Description 1",
+                Source = "Test",
+                Timestamp = DateTime.UtcNow,
+                Category = "Auto Category"
+            };
+            
+            _mockSignalOrchestrator.Setup(x => x.GetProcessedSignalAsync(signalId))
+                .ReturnsAsync(expectedSignal);
 
             // Act
             var result = await _controller.GetSignal(signalId);
@@ -147,7 +149,8 @@ namespace SIREN.API.Tests.Controllers
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
             var signal = Assert.IsType<SupportSignal>(okResult.Value);
             Assert.Equal(signalId, signal.Id);
-            Assert.Equal("Auto Category", signal.Category); // Should be auto-categorized
+            Assert.Equal("Auto Category", signal.Category);
+            _mockSignalOrchestrator.Verify(x => x.GetProcessedSignalAsync(signalId), Times.Once);
         }
 
         [Fact]
@@ -155,8 +158,8 @@ namespace SIREN.API.Tests.Controllers
         {
             // Arrange
             var signalId = "non-existent";
-            _mockSignalProvider.Setup(x => x.GetSignalsAsync())
-                .ReturnsAsync(_sampleSignals);
+            _mockSignalOrchestrator.Setup(x => x.GetProcessedSignalAsync(signalId))
+                .ReturnsAsync((SupportSignal)null);
 
             // Act
             var result = await _controller.GetSignal(signalId);
@@ -171,8 +174,8 @@ namespace SIREN.API.Tests.Controllers
         {
             // Arrange
             var signalId = "signal-1";
-            _mockSignalProvider.Setup(x => x.GetSignalsAsync())
-                .ThrowsAsync(new Exception("Database error"));
+            _mockSignalOrchestrator.Setup(x => x.GetProcessedSignalAsync(signalId))
+                .ThrowsAsync(new Exception("Orchestrator error"));
 
             // Act
             var result = await _controller.GetSignal(signalId);
@@ -193,7 +196,7 @@ namespace SIREN.API.Tests.Controllers
             // Arrange
             var signalId = "signal-1";
             var request = new ManualScoreRequest { Score = 8.5 };
-            _mockSignalProvider.Setup(x => x.GetSignalsAsync())
+            _mockSignalOrchestrator.Setup(x => x.GetRawSignalsAsync())
                 .ReturnsAsync(_sampleSignals);
             _mockManualTriageService.Setup(x => x.UpdateManualScoreAsync(signalId, request.Score))
                 .Returns(Task.CompletedTask);
@@ -207,7 +210,8 @@ namespace SIREN.API.Tests.Controllers
             Assert.Equal(signalId, signal.Id);
             Assert.Equal(request.Score, signal.ManualScore);
             
-            // Verify manual triage service was called
+            // Verify services were called
+            _mockSignalOrchestrator.Verify(x => x.GetRawSignalsAsync(), Times.Once);
             _mockManualTriageService.Verify(x => x.UpdateManualScoreAsync(signalId, request.Score), Times.Once);
         }
 
@@ -217,7 +221,7 @@ namespace SIREN.API.Tests.Controllers
             // Arrange
             var signalId = "non-existent";
             var request = new ManualScoreRequest { Score = 8.5 };
-            _mockSignalProvider.Setup(x => x.GetSignalsAsync())
+            _mockSignalOrchestrator.Setup(x => x.GetRawSignalsAsync())
                 .ReturnsAsync(_sampleSignals);
 
             // Act
@@ -237,8 +241,8 @@ namespace SIREN.API.Tests.Controllers
             // Arrange
             var signalId = "signal-1";
             var request = new ManualScoreRequest { Score = 8.5 };
-            _mockSignalProvider.Setup(x => x.GetSignalsAsync())
-                .ThrowsAsync(new Exception("Database error"));
+            _mockSignalOrchestrator.Setup(x => x.GetRawSignalsAsync())
+                .ThrowsAsync(new Exception("Orchestrator error"));
 
             // Act
             var result = await _controller.UpdateManualScore(signalId, request);
@@ -258,13 +262,21 @@ namespace SIREN.API.Tests.Controllers
         {
             // Arrange
             var category = "Test Category";
-            var signalsWithCategory = _sampleSignals.ToList();
-            signalsWithCategory[0].Category = category; // Set category for filtering
+            var filteredSignals = new List<SupportSignal>
+            {
+                new SupportSignal
+                {
+                    Id = "signal-1",
+                    Title = "Test Signal 1",
+                    Description = "Description 1",
+                    Source = "Test",
+                    Timestamp = DateTime.UtcNow,
+                    Category = category
+                }
+            };
             
-            _mockSignalProvider.Setup(x => x.GetSignalsAsync())
-                .ReturnsAsync(signalsWithCategory);
-            _mockCategorizer.Setup(x => x.CategorizeSignal(It.IsAny<SupportSignal>()))
-                .Returns("Other Category");
+            _mockSignalOrchestrator.Setup(x => x.GetProcessedSignalsByCategoryAsync(category))
+                .ReturnsAsync(filteredSignals);
 
             // Act
             var result = await _controller.GetSignalsByCategory(category);
@@ -274,6 +286,7 @@ namespace SIREN.API.Tests.Controllers
             var signals = Assert.IsAssignableFrom<List<SupportSignal>>(okResult.Value);
             Assert.Single(signals);
             Assert.Equal(category, signals[0].Category);
+            _mockSignalOrchestrator.Verify(x => x.GetProcessedSignalsByCategoryAsync(category), Times.Once);
         }
 
         [Fact]
@@ -281,11 +294,21 @@ namespace SIREN.API.Tests.Controllers
         {
             // Arrange
             var category = "test category";
-            var signalsWithCategory = _sampleSignals.ToList();
-            signalsWithCategory[0].Category = "TEST CATEGORY"; // Different case
+            var filteredSignals = new List<SupportSignal>
+            {
+                new SupportSignal
+                {
+                    Id = "signal-1",
+                    Title = "Test Signal 1",
+                    Description = "Description 1",
+                    Source = "Test",
+                    Timestamp = DateTime.UtcNow,
+                    Category = "TEST CATEGORY" // Different case
+                }
+            };
             
-            _mockSignalProvider.Setup(x => x.GetSignalsAsync())
-                .ReturnsAsync(signalsWithCategory);
+            _mockSignalOrchestrator.Setup(x => x.GetProcessedSignalsByCategoryAsync(category))
+                .ReturnsAsync(filteredSignals);
 
             // Act
             var result = await _controller.GetSignalsByCategory(category);
@@ -302,8 +325,8 @@ namespace SIREN.API.Tests.Controllers
         {
             // Arrange
             var category = "Test Category";
-            _mockSignalProvider.Setup(x => x.GetSignalsAsync())
-                .ThrowsAsync(new Exception("Database error"));
+            _mockSignalOrchestrator.Setup(x => x.GetProcessedSignalsByCategoryAsync(category))
+                .ThrowsAsync(new Exception("Orchestrator error"));
 
             // Act
             var result = await _controller.GetSignalsByCategory(category);
@@ -321,21 +344,17 @@ namespace SIREN.API.Tests.Controllers
         [Fact]
         public async Task GetSummary_ShouldReturnCorrectStatistics_WhenSuccessful()
         {
-            // Arrange
-            var signalsWithData = new List<SupportSignal>
+            // Arrange - setup processed signals that the orchestrator would return
+            var processedSignals = new List<SupportSignal>
             {
                 new SupportSignal { Id = "1", Title = "Signal 1", Description = "Desc", Source = "Test", Timestamp = DateTime.UtcNow, Category = "Category A", ManualScore = 5.0 },
                 new SupportSignal { Id = "2", Title = "Signal 2", Description = "Desc", Source = "Test", Timestamp = DateTime.UtcNow, Category = "Category A", ManualScore = null },
                 new SupportSignal { Id = "3", Title = "Signal 3", Description = "Desc", Source = "Test", Timestamp = DateTime.UtcNow, Category = "Category B", ManualScore = 7.0 },
-                new SupportSignal { Id = "4", Title = "Signal 4", Description = "Desc", Source = "Test", Timestamp = DateTime.UtcNow, Category = null, ManualScore = null }
+                new SupportSignal { Id = "4", Title = "Signal 4", Description = "Desc", Source = "Test", Timestamp = DateTime.UtcNow, Category = "Auto Category", ManualScore = null } // Processed by orchestrator
             };
 
-            _mockSignalProvider.Setup(x => x.GetSignalsAsync())
-                .ReturnsAsync(signalsWithData);
-            _mockCategorizer.Setup(x => x.CategorizeSignal(It.IsAny<SupportSignal>()))
-                .Returns("Auto Category");
-            _mockManualTriageService.Setup(x => x.ApplyManualTriageData(It.IsAny<IEnumerable<SupportSignal>>()))
-                .Returns<IEnumerable<SupportSignal>>(signals => signals);
+            _mockSignalOrchestrator.Setup(x => x.GetProcessedSignalsAsync())
+                .ReturnsAsync(processedSignals);
 
             // Act
             var result = await _controller.GetSummary();
@@ -345,7 +364,7 @@ namespace SIREN.API.Tests.Controllers
             var summary = Assert.IsType<SignalSummary>(okResult.Value);
             
             Assert.Equal(4, summary.TotalSignals);
-            Assert.Equal(4, summary.CategorizedSignals); // All categorized (auto-categorization applied)
+            Assert.Equal(4, summary.CategorizedSignals); // All categorized (processed by orchestrator)
             Assert.Equal(0, summary.UncategorizedSignals);
             Assert.Equal(2, summary.ManuallyScored); // Only 2 have manual scores
             Assert.Equal(3, summary.Categories.Count); // Category A, Category B, Auto Category
@@ -353,32 +372,30 @@ namespace SIREN.API.Tests.Controllers
             // Check category counts
             var categoryA = summary.Categories.First(c => c.Category == "Category A");
             Assert.Equal(2, categoryA.Count);
+            
+            _mockSignalOrchestrator.Verify(x => x.GetProcessedSignalsAsync(), Times.Once);
         }
 
         [Fact]
-        public async Task GetSummary_ShouldApplyManualTriageData()
+        public async Task GetSummary_ShouldCallOrchestrator_WhenGeneratingStatistics()
         {
             // Arrange
-            _mockSignalProvider.Setup(x => x.GetSignalsAsync())
+            _mockSignalOrchestrator.Setup(x => x.GetProcessedSignalsAsync())
                 .ReturnsAsync(_sampleSignals);
-            _mockCategorizer.Setup(x => x.CategorizeSignal(It.IsAny<SupportSignal>()))
-                .Returns("Auto Category");
-            _mockManualTriageService.Setup(x => x.ApplyManualTriageData(It.IsAny<IEnumerable<SupportSignal>>()))
-                .Returns<IEnumerable<SupportSignal>>(signals => signals);
 
             // Act
             await _controller.GetSummary();
 
             // Assert
-            _mockManualTriageService.Verify(x => x.ApplyManualTriageData(It.IsAny<IEnumerable<SupportSignal>>()), Times.Once);
+            _mockSignalOrchestrator.Verify(x => x.GetProcessedSignalsAsync(), Times.Once);
         }
 
         [Fact]
         public async Task GetSummary_ShouldReturn500_WhenExceptionOccurs()
         {
             // Arrange
-            _mockSignalProvider.Setup(x => x.GetSignalsAsync())
-                .ThrowsAsync(new Exception("Database error"));
+            _mockSignalOrchestrator.Setup(x => x.GetProcessedSignalsAsync())
+                .ThrowsAsync(new Exception("Orchestrator error"));
 
             // Act
             var result = await _controller.GetSummary();
@@ -397,14 +414,8 @@ namespace SIREN.API.Tests.Controllers
         public async Task GetSignals_ShouldLogCorrectly_WhenSuccessful()
         {
             // Arrange
-            _mockSignalProvider.Setup(x => x.GetSignalsAsync())
+            _mockSignalOrchestrator.Setup(x => x.GetProcessedSignalsAsync())
                 .ReturnsAsync(_sampleSignals);
-            _mockSignalProvider.Setup(x => x.ProviderName)
-                .Returns("TestProvider");
-            _mockCategorizer.Setup(x => x.CategorizeSignal(It.IsAny<SupportSignal>()))
-                .Returns("Auto Category");
-            _mockManualTriageService.Setup(x => x.ApplyManualTriageData(It.IsAny<IEnumerable<SupportSignal>>()))
-                .Returns<IEnumerable<SupportSignal>>(signals => signals);
 
             // Act
             await _controller.GetSignals();
@@ -415,7 +426,7 @@ namespace SIREN.API.Tests.Controllers
                 x => x.Log(
                     LogLevel.Information,
                     It.IsAny<EventId>(),
-                    It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Loading signals from")),
+                    It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Loading and processing signals")),
                     It.IsAny<Exception>(),
                     It.IsAny<Func<It.IsAnyType, Exception, string>>()),
                 Times.Once);
@@ -436,7 +447,7 @@ namespace SIREN.API.Tests.Controllers
             // Arrange
             var signalId = "signal-1";
             var request = new ManualScoreRequest { Score = 8.5 };
-            _mockSignalProvider.Setup(x => x.GetSignalsAsync())
+            _mockSignalOrchestrator.Setup(x => x.GetRawSignalsAsync())
                 .ReturnsAsync(_sampleSignals);
             _mockManualTriageService.Setup(x => x.UpdateManualScoreAsync(signalId, request.Score))
                 .Returns(Task.CompletedTask);

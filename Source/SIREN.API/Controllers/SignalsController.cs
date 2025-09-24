@@ -8,21 +8,18 @@ namespace SIREN.API.Controllers
     [Route("api/[controller]")]
     public class SignalsController : ControllerBase
     {
-        private readonly ISignalProvider _signalProvider;
-        private readonly ICategorizer _categorizer;
+        private readonly ISignalOrchestrator _signalOrchestrator;
         private readonly ILogger<SignalsController> _logger;
         private readonly IManualTriageService _manualTriageService;
 
         public SignalsController(
-            ISignalProvider signalProvider, 
-            ICategorizer categorizer,
+            ISignalOrchestrator signalOrchestrator,
             ILogger<SignalsController> logger,
             IManualTriageService manualTriageService)
         {
-            _signalProvider = signalProvider;
-            _categorizer = categorizer;
-            _logger = logger;
-            _manualTriageService = manualTriageService;
+            _signalOrchestrator = signalOrchestrator ?? throw new ArgumentNullException(nameof(signalOrchestrator));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _manualTriageService = manualTriageService ?? throw new ArgumentNullException(nameof(manualTriageService));
         }
 
         /// <summary>
@@ -33,22 +30,10 @@ namespace SIREN.API.Controllers
         {
             try
             {
-                _logger.LogInformation("Loading signals from {ProviderName}", _signalProvider.ProviderName);
+                _logger.LogInformation("Loading and processing signals");
                 
-                var signals = await _signalProvider.GetSignalsAsync();
+                var signals = await _signalOrchestrator.GetProcessedSignalsAsync();
                 var signalList = signals.ToList();
-
-                // Auto-categorize signals that don't have a category
-                foreach (var signal in signalList)
-                {
-                    if (string.IsNullOrEmpty(signal.Category))
-                    {
-                        signal.Category = _categorizer.CategorizeSignal(signal);
-                    }
-                }
-                
-                // Apply manual triage data (scores and category overrides)
-                signalList = _manualTriageService.ApplyManualTriageData(signalList).ToList();
 
                 _logger.LogInformation("Successfully loaded and categorized {Count} signals", signalList.Count);
                 return Ok(signalList);
@@ -68,18 +53,11 @@ namespace SIREN.API.Controllers
         {
             try
             {
-                var signals = await _signalProvider.GetSignalsAsync();
-                var signal = signals.FirstOrDefault(s => s.Id == id);
+                var signal = await _signalOrchestrator.GetProcessedSignalAsync(id);
 
                 if (signal == null)
                 {
                     return NotFound($"Signal with ID '{id}' not found");
-                }
-
-                // Auto-categorize if needed
-                if (string.IsNullOrEmpty(signal.Category))
-                {
-                    signal.Category = _categorizer.CategorizeSignal(signal);
                 }
 
                 return Ok(signal);
@@ -99,7 +77,8 @@ namespace SIREN.API.Controllers
         {
             try
             {
-                var signals = await _signalProvider.GetSignalsAsync();
+                // Use raw signals to avoid applying existing triage data before updating
+                var signals = await _signalOrchestrator.GetRawSignalsAsync();
                 var signal = signals.FirstOrDefault(s => s.Id == id);
 
                 if (signal == null)
@@ -132,23 +111,10 @@ namespace SIREN.API.Controllers
         {
             try
             {
-                var signals = await _signalProvider.GetSignalsAsync();
+                var signals = await _signalOrchestrator.GetProcessedSignalsByCategoryAsync(category);
                 var signalList = signals.ToList();
 
-                // Auto-categorize signals that don't have a category
-                foreach (var signal in signalList)
-                {
-                    if (string.IsNullOrEmpty(signal.Category))
-                    {
-                        signal.Category = _categorizer.CategorizeSignal(signal);
-                    }
-                }
-
-                var filteredSignals = signalList.Where(s => 
-                    string.Equals(s.Category, category, StringComparison.OrdinalIgnoreCase))
-                    .ToList();
-
-                return Ok(filteredSignals);
+                return Ok(signalList);
             }
             catch (Exception ex)
             {
@@ -165,20 +131,8 @@ namespace SIREN.API.Controllers
         {
             try
             {
-                var signals = await _signalProvider.GetSignalsAsync();
+                var signals = await _signalOrchestrator.GetProcessedSignalsAsync();
                 var signalList = signals.ToList();
-
-                // Auto-categorize for accurate stats
-                foreach (var signal in signalList)
-                {
-                    if (string.IsNullOrEmpty(signal.Category))
-                    {
-                        signal.Category = _categorizer.CategorizeSignal(signal);
-                    }
-                }
-                
-                // Apply manual triage data for accurate statistics
-                signalList = _manualTriageService.ApplyManualTriageData(signalList).ToList();
 
                 var summary = new SignalSummary
                 {

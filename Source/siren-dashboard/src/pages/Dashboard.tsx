@@ -1,139 +1,65 @@
-import React, { useState, useEffect } from 'react';
-import { SupportSignal, DashboardState } from '../types';
-import { signalsApi, categoriesApi, healthApi, teamsApi } from '../services/api';
+import React from 'react';
+import { SupportSignal } from '../types';
 import { isTeamsFeatureEnabled } from '../config/features';
 import DashboardSummary from '../components/DashboardSummary';
 import SignalTable from '../components/SignalTable';
 import TriagePanel from '../components/TriagePanel';
 import ReportGenerationModal from '../components/ReportGenerationModal';
+import { useDashboardData, useSignalManagement, useTeamManagement, useCategoryFilter } from '../hooks';
 
 const Dashboard: React.FC = () => {
-  const [state, setState] = useState<DashboardState>({
-    signals: [],
-    summary: null,
-    categoryStats: [],
-    teams: [],
-    selectedTeam: null,
-    loading: true,
-    error: null,
-    selectedCategory: null,
-  });
-
-  const [selectedSignal, setSelectedSignal] = useState<SupportSignal | null>(null);
-  const [showTriage, setShowTriage] = useState(false);
-  const [showReportModal, setShowReportModal] = useState(false);
-
-  useEffect(() => {
-    loadDashboardData();
-  }, []);
-
-  const loadDashboardData = async (forceRefresh = false) => {
-    setState(prev => ({ ...prev, loading: true, error: null }));
-
-    try {
-      // Check API health first
-      const isHealthy = await healthApi.checkHealth();
-      if (!isHealthy) {
-        throw new Error('API is not responding. Please ensure the SIREN.API server is running.');
-      }
-
-      // Load core dashboard data in parallel
-      const [signals, summary, categoryStats] = await Promise.all([
-        signalsApi.getSignals(forceRefresh),
-        signalsApi.getSummary(forceRefresh),
-        categoriesApi.getCategoryStats(forceRefresh),
-      ]);
-
-      // Conditionally load teams data only if the feature is enabled
-      const teams = isTeamsFeatureEnabled() 
-        ? await teamsApi.getTeams(forceRefresh)
-        : [];
-
-      setState(prev => ({
-        ...prev,
-        signals,
-        summary,
-        categoryStats,
-        teams,
-        loading: false,
-      }));
-    } catch (error) {
-      console.error('Failed to load dashboard data:', error);
-      setState(prev => ({
-        ...prev,
-        loading: false,
-        error: error instanceof Error ? error.message : 'Failed to load dashboard data',
-      }));
-    }
-  };
-
-  const handleSignalSelect = (signal: SupportSignal) => {
-    setSelectedSignal(signal);
-    setShowTriage(true);
-  };
-
-  const handleTriageClose = () => {
-    setSelectedSignal(null);
-    setShowTriage(false);
-  };
+  // Extract business logic into focused custom hooks
+  const { 
+    signals, 
+    summary, 
+    categoryStats, 
+    teams, 
+    loading, 
+    error, 
+    loadDashboardData, 
+    refreshSummaryData, 
+    updateSignal 
+  } = useDashboardData();
+  
+  const {
+    selectedSignal,
+    showTriage,
+    showReportModal,
+    handleSignalSelect,
+    handleTriageClose,
+    handleReportModalOpen,
+    handleReportModalClose,
+  } = useSignalManagement();
+  
+  const {
+    selectedTeam,
+    teamError,
+    handleTeamSelect,
+  } = useTeamManagement();
+  
+  const {
+    selectedCategory,
+    handleCategoryFilter,
+  } = useCategoryFilter();
 
   const handleSignalUpdated = async (updatedSignal: SupportSignal) => {
     // Update the signal in the list immediately
-    setState(prev => ({
-      ...prev,
-      signals: prev.signals.map(s => s.id === updatedSignal.id ? updatedSignal : s),
-    }));
+    updateSignal(updatedSignal);
     
     // Only refresh summary and category stats (these are affected by signal changes)
     // Don't reload all signals since we just updated the specific one
-    try {
-      const [summary, categoryStats] = await Promise.all([
-        signalsApi.getSummary(true), // Force refresh
-        categoriesApi.getCategoryStats(true), // Force refresh
-      ]);
-
-      setState(prev => ({
-        ...prev,
-        summary,
-        categoryStats,
-      }));
-    } catch (error) {
-      console.error('Failed to refresh summary data:', error);
-      // Fallback to full reload only if partial refresh fails
-      loadDashboardData();
-    }
+    await refreshSummaryData();
   };
 
-  const handleCategoryFilter = (category: string | null) => {
-    setState(prev => ({ ...prev, selectedCategory: category }));
-  };
+  // Use team error if present, otherwise use dashboard data error
+  const displayError = teamError || error;
 
-  // Team selection handler - used when teams feature is enabled
-  const handleTeamSelect = async (teamName: string | null) => {
-    if (!teamName) {
-      setState(prev => ({ ...prev, selectedTeam: null }));
-      return;
-    }
-
-    try {
-      const teamConfig = await teamsApi.getTeamConfiguration(teamName);
-      setState(prev => ({ ...prev, selectedTeam: teamConfig }));
-    } catch (error) {
-      console.error('Failed to load team configuration:', error);
-      setState(prev => ({ 
-        ...prev, 
-        selectedTeam: null,
-        error: `Failed to load team configuration for ${teamName}` 
-      }));
-    }
-  };
-
-  if (state.error) {
+  if (displayError) {
     return (
       <div className="dashboard-error">
         <div className="error-content">
           <h2>🚨 Connection Error</h2>
-          <p>{state.error}</p>
+          <p>{displayError}</p>
           <div className="error-actions">
             <button 
               className="action-button primary"
@@ -163,15 +89,15 @@ const Dashboard: React.FC = () => {
             <button 
               className="action-button secondary"
               onClick={() => loadDashboardData(true)}
-              disabled={state.loading}
+              disabled={loading}
             >
               🔄 Refresh
             </button>
             
             <button 
               className="action-button primary"
-              onClick={() => setShowReportModal(true)}
-              disabled={state.loading}
+              onClick={handleReportModalOpen}
+              disabled={loading}
             >
               📊 Generate Report
             </button>
@@ -182,12 +108,12 @@ const Dashboard: React.FC = () => {
                 <label htmlFor="team-select">Select team:</label>
                 <select
                   id="team-select"
-                  value={state.selectedTeam?.teamName || ''}
+                  value={selectedTeam?.teamName || ''}
                   onChange={(e) => handleTeamSelect(e.target.value || null)}
-                  disabled={state.loading}
+                  disabled={loading}
                 >
                   <option value="">No team selected</option>
-                  {state.teams.map((team) => (
+                  {teams.map((team) => (
                     <option key={team.teamName} value={team.teamName}>
                       {team.displayName}
                     </option>
@@ -200,11 +126,11 @@ const Dashboard: React.FC = () => {
               <label htmlFor="category-select">Filter by category:</label>
               <select
                 id="category-select"
-                value={state.selectedCategory || ''}
+                value={selectedCategory || ''}
                 onChange={(e) => handleCategoryFilter(e.target.value || null)}
               >
                 <option value="">All categories</option>
-                {state.categoryStats.map((stat, index) => (
+                {categoryStats.map((stat, index) => (
                   <option key={`filter-${index}-${stat.category}`} value={stat.category}>
                     {stat.category} ({stat.count})
                   </option>
@@ -216,18 +142,18 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Team Context Section - Feature Toggle */}
-      {isTeamsFeatureEnabled() && state.selectedTeam && (
+      {isTeamsFeatureEnabled() && selectedTeam && (
         <div className="team-context-section">
           <div className="team-context-header">
-            <h2>📋 {state.selectedTeam.displayName} Context</h2>
-            <p>{state.selectedTeam.description}</p>
+            <h2>📋 {selectedTeam.displayName} Context</h2>
+            <p>{selectedTeam.description}</p>
           </div>
           
           <div className="team-context-details">
             <div className="team-categories">
-              <h3>Active Categories ({state.selectedTeam.categories.filter(c => c.isActive).length})</h3>
+              <h3>Active Categories ({selectedTeam.categories.filter(c => c.isActive).length})</h3>
               <div className="category-tags">
-                {state.selectedTeam.categories
+                {selectedTeam.categories
                   .filter(c => c.isActive)
                   .map((category) => (
                     <span 
@@ -250,9 +176,9 @@ const Dashboard: React.FC = () => {
             </div>
             
             <div className="team-datasources">
-              <h3>Enabled Data Sources ({state.selectedTeam.dataSources.filter(ds => ds.isEnabled).length})</h3>
+              <h3>Enabled Data Sources ({selectedTeam.dataSources.filter(ds => ds.isEnabled).length})</h3>
               <div className="datasource-list">
-                {state.selectedTeam.dataSources
+                {selectedTeam.dataSources
                   .filter(ds => ds.isEnabled)
                   .map((source) => (
                     <div key={source.name} className="datasource-item">
@@ -269,9 +195,9 @@ const Dashboard: React.FC = () => {
             <div className="team-triage-settings">
               <h3>Triage Settings</h3>
               <div className="triage-details">
-                <p><strong>Default Score:</strong> {state.selectedTeam.triageSettings.defaultScore}</p>
-                <p><strong>Manual Scoring:</strong> {state.selectedTeam.triageSettings.enableManualScoring ? 'Enabled' : 'Disabled'}</p>
-                <p><strong>High Priority Categories:</strong> {state.selectedTeam.triageSettings.highPriorityCategories.join(', ')}</p>
+                <p><strong>Default Score:</strong> {selectedTeam.triageSettings.defaultScore}</p>
+                <p><strong>Manual Scoring:</strong> {selectedTeam.triageSettings.enableManualScoring ? 'Enabled' : 'Disabled'}</p>
+                <p><strong>High Priority Categories:</strong> {selectedTeam.triageSettings.highPriorityCategories.join(', ')}</p>
               </div>
             </div>
           </div>
@@ -283,19 +209,19 @@ const Dashboard: React.FC = () => {
         {/* Summary Section */}
         <section className="dashboard-section">
           <DashboardSummary
-            summary={state.summary}
-            categoryStats={state.categoryStats}
-            loading={state.loading}
+            summary={summary}
+            categoryStats={categoryStats}
+            loading={loading}
           />
         </section>
 
         {/* Signals Table Section */}
         <section className="dashboard-section">
           <SignalTable
-            signals={state.signals}
+            signals={signals}
             onSignalSelect={handleSignalSelect}
-            selectedCategory={state.selectedCategory || undefined}
-            loading={state.loading}
+            selectedCategory={selectedCategory || undefined}
+            loading={loading}
           />
         </section>
       </div>
@@ -316,21 +242,21 @@ const Dashboard: React.FC = () => {
         <div className="report-overlay">
           <ReportGenerationModal
             dashboardData={{
-              signals: state.signals,
-              summary: state.summary,
-              categoryStats: state.categoryStats,
-              teams: state.teams,
-              selectedTeam: state.selectedTeam
+              signals,
+              summary,
+              categoryStats,
+              teams,
+              selectedTeam
             }}
-            onClose={() => setShowReportModal(false)}
+            onClose={handleReportModalClose}
           />
         </div>
       )}
 
       {/* Status indicator */}
       <div className="dashboard-status">
-        <span className={`status-indicator ${state.loading ? 'loading' : 'ready'}`}>
-          {state.loading ? 'Loading...' : 'Ready'}
+        <span className={`status-indicator ${loading ? 'loading' : 'ready'}`}>
+          {loading ? 'Loading...' : 'Ready'}
         </span>
       </div>
     </div>

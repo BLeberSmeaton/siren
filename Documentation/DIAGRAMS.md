@@ -1,6 +1,6 @@
-# SIREN System Diagrams
+# SIREN System Diagrams - Current & Future State
 
-## 🏗️ **System Architecture Diagram**
+## 🏗️ **Current System Architecture (Enhanced AI + Team Management)**
 
 ```mermaid
 graph TB
@@ -8,32 +8,37 @@ graph TB
         CSV[CSV Files<br/>Legacy Exports]
         JIRA[Jira API<br/>Live Issues]
         TEAMS[Teams API<br/>Real-time Messages]
-        FUTURE[Future Sources<br/>Slack, Splunk, etc.]
+        FUTURE[Future Sources<br/>Slack, ServiceNow, etc.]
     end
     
     subgraph "SIREN Core System"
         subgraph "Provider Layer"
-            CSVP[CsvSignalProvider<br/>✅ Implemented]
-            JIRAP[JiraSignalProvider<br/>🔜 Tomorrow]
-            TEAMSP[TeamsSignalProvider<br/>🔜 Tomorrow]
+            CSVP[CsvSignalProvider<br/>✅ Active]
+            JIRAP[JiraSignalProvider<br/>⏳ Ready]
+            TEAMSP[TeamsSignalProvider<br/>⏳ Ready]
         end
         
-        subgraph "Processing Layer"
-            CAT[CategoryEngine<br/>Keyword Matching<br/>Priority Rules]
-            SIG[SupportSignal<br/>Universal Model]
+        subgraph "Enhanced AI Processing"
+            ENHANCED[EnhancedPatternEngine<br/>✅ Multi-layered AI<br/>• Fuzzy Matching<br/>• Regex Patterns<br/>• Confidence Scoring]
+            ML_INTEG[MLIntegrationService<br/>✅ Hybrid AI Framework<br/>• Traditional + ML<br/>• Readiness Assessment]
+            LEARNING[PatternLearningService<br/>✅ Continuous Learning<br/>• Feedback Processing<br/>• Pattern Evolution]
+        end
+        
+        subgraph "Team Management"
+            CONFIG[ConfigurationService<br/>✅ Team-Aware Config<br/>• Multi-team Support<br/>• Dynamic Categories]
+            WIZARD[NewTeamWizard<br/>✅ AI-Powered Setup<br/>• Sample Analysis<br/>• Smart Suggestions]
         end
         
         subgraph "Intelligence Layer"
-            TRIAGE[Manual Scoring<br/>Human Triage]
-            INSIGHTS[Actionable Insights<br/>Toil Reduction]
+            TRIAGE[ManualTriageService<br/>✅ Human+AI Collab<br/>• Explainable Results<br/>• Feedback Loop]
+            INSIGHTS[Advanced Analytics<br/>✅ Deep Insights<br/>• Team Performance<br/>• Trend Analysis]
         end
     end
     
     subgraph "Output Systems"
-        CONSOLE[Console Demo<br/>✅ Working]
-        DASH[Dashboard UI<br/>🔜 Tomorrow]
-        STORAGE[JSON Storage<br/>🔜 Tomorrow]
-        REPORTS[Multi-timeframe<br/>Reports]
+        DASH[React Dashboard<br/>✅ Production Ready<br/>• Team Management<br/>• Advanced Analytics]
+        API[ASP.NET Core API<br/>✅ Full REST API<br/>• Team Endpoints<br/>• Pattern APIs]
+        REPORTS[Report Generation<br/>✅ PDF/CSV Export<br/>• Custom Reports<br/>• Scheduled Delivery]
     end
     
     CSV --> CSVP
@@ -41,54 +46,145 @@ graph TB
     TEAMS --> TEAMSP
     FUTURE --> TEAMSP
     
-    CSVP --> SIG
-    JIRAP --> SIG
-    TEAMSP --> SIG
+    CSVP --> ENHANCED
+    JIRAP --> ENHANCED
+    TEAMSP --> ENHANCED
     
-    SIG --> CAT
-    CAT --> TRIAGE
+    ENHANCED --> ML_INTEG
+    ML_INTEG --> LEARNING
+    LEARNING --> TRIAGE
+    
+    CONFIG --> ENHANCED
+    WIZARD --> CONFIG
+    
     TRIAGE --> INSIGHTS
-    
-    INSIGHTS --> CONSOLE
     INSIGHTS --> DASH
-    INSIGHTS --> STORAGE
+    INSIGHTS --> API
     INSIGHTS --> REPORTS
     
     style CSVP fill:#90EE90
-    style CAT fill:#90EE90
-    style SIG fill:#90EE90
-    style CONSOLE fill:#90EE90
+    style ENHANCED fill:#90EE90
+    style ML_INTEG fill:#90EE90
+    style LEARNING fill:#90EE90
+    style CONFIG fill:#90EE90
+    style WIZARD fill:#90EE90
+    style TRIAGE fill:#90EE90
+    style INSIGHTS fill:#90EE90
+    style DASH fill:#90EE90
+    style API fill:#90EE90
+    style REPORTS fill:#90EE90
     style JIRAP fill:#FFE4B5
     style TEAMSP fill:#FFE4B5
-    style DASH fill:#FFE4B5
-    style STORAGE fill:#FFE4B5
 ```
 
-## 🔄 **Data Flow Diagram**
+## 🤖 **Future State Architecture (Full ML Integration)**
+
+```mermaid
+graph TB
+    subgraph "External Data Sources"
+        CSV2[CSV Files<br/>Historical Data]
+        JIRA2[Jira API<br/>Real-time Issues]
+        TEAMS2[Teams Messages<br/>Live Conversations]
+        SLACK[Slack Channels<br/>Informal Support]
+        SERVICENOW[ServiceNow<br/>Incident Management]
+        LOGS[Log Analytics<br/>System Telemetry]
+    end
+    
+    subgraph "ML-Enhanced SIREN System"
+        subgraph "Data Ingestion & Preprocessing"
+            STREAM[Real-time Streaming<br/>• Apache Kafka<br/>• Event Processing<br/>• Data Normalization]
+            VECTORIZE[Text Vectorization<br/>• BERT/RoBERTa<br/>• Semantic Embeddings<br/>• Feature Extraction]
+        end
+        
+        subgraph "Advanced ML Processing"
+            TRANSFORMER[Transformer Models<br/>🤖 BERT Classification<br/>• Multi-class Prediction<br/>• Confidence Scoring<br/>• Attention Visualization]
+            SIMILARITY[Semantic Similarity<br/>🤖 Vector Search<br/>• Similar Issue Detection<br/>• Knowledge Transfer<br/>• Pattern Clustering]
+            ANOMALY[Anomaly Detection<br/>🤖 Outlier Analysis<br/>• Unusual Pattern Alert<br/>• Drift Detection<br/>• Quality Monitoring]
+        end
+        
+        subgraph "Hybrid Intelligence Layer"
+            ENSEMBLE[Ensemble Methods<br/>🤖 Model Combination<br/>• Traditional + ML<br/>• Weighted Voting<br/>• Confidence Gating]
+            FEEDBACK[Active Learning<br/>🤖 Continuous Improvement<br/>• User Feedback Loop<br/>• Model Retraining<br/>• Performance Tracking]
+            EXPLAIN[Explainable AI<br/>🤖 Interpretability<br/>• SHAP Values<br/>• Feature Attribution<br/>• Decision Reasoning]
+        end
+        
+        subgraph "Intelligent Automation"
+            ROUTING[Predictive Routing<br/>🤖 Smart Assignment<br/>• Team Expertise Match<br/>• Workload Balancing<br/>• SLA Optimization]
+            FORECAST[Capacity Forecasting<br/>🤖 Predictive Analytics<br/>• Volume Prediction<br/>• Resource Planning<br/>• Trend Analysis]
+        end
+    end
+    
+    subgraph "Advanced Output Systems"
+        AI_DASH[AI-Enhanced Dashboard<br/>🤖 Intelligent UI<br/>• Proactive Insights<br/>• Predictive Alerts<br/>• Automated Reports]
+        AUTO_API[Autonomous API<br/>🤖 Self-Managing<br/>• Auto-scaling<br/>• Performance Tuning<br/>• Error Recovery]
+        ML_REPORTS[ML-Generated Reports<br/>🤖 Insight Generation<br/>• Pattern Discovery<br/>• Trend Explanation<br/>• Recommendation Engine]
+    end
+    
+    CSV2 --> STREAM
+    JIRA2 --> STREAM
+    TEAMS2 --> STREAM
+    SLACK --> STREAM
+    SERVICENOW --> STREAM
+    LOGS --> STREAM
+    
+    STREAM --> VECTORIZE
+    VECTORIZE --> TRANSFORMER
+    VECTORIZE --> SIMILARITY
+    VECTORIZE --> ANOMALY
+    
+    TRANSFORMER --> ENSEMBLE
+    SIMILARITY --> ENSEMBLE
+    ANOMALY --> ENSEMBLE
+    
+    ENSEMBLE --> FEEDBACK
+    FEEDBACK --> EXPLAIN
+    EXPLAIN --> ROUTING
+    ROUTING --> FORECAST
+    
+    FORECAST --> AI_DASH
+    FORECAST --> AUTO_API
+    FORECAST --> ML_REPORTS
+    
+    style STREAM fill:#87CEEB
+    style VECTORIZE fill:#87CEEB
+    style TRANSFORMER fill:#FFD700
+    style SIMILARITY fill:#FFD700
+    style ANOMALY fill:#FFD700
+    style ENSEMBLE fill:#98FB98
+    style FEEDBACK fill:#98FB98
+    style EXPLAIN fill:#98FB98
+    style ROUTING fill:#DDA0DD
+    style FORECAST fill:#DDA0DD
+    style AI_DASH fill:#90EE90
+    style AUTO_API fill:#90EE90
+    style ML_REPORTS fill:#90EE90
+```
+
+## 🔄 **Enhanced Data Flow Diagram (Current State)**
 
 ```mermaid
 flowchart LR
-    subgraph "1. Signal Collection"
-        A1[Raw Support Signals<br/>Scattered Across 8+ Channels]
-        A2[Manual Analysis<br/>Hours of Human Work]
+    subgraph "1. Multi-Source Collection"
+        A1[Raw Support Signals<br/>Multiple Data Sources<br/>• CSV, Jira, Teams<br/>• Automated Ingestion]
+        A2[Team Configuration<br/>AI-Powered Setup<br/>• Sample Analysis<br/>• Smart Categories]
     end
     
-    subgraph "2. AI Processing"
-        B1[Automated Aggregation<br/>ISignalProvider Interface]
-        B2[Intelligent Categorization<br/>CategoryEngine]
-        B3[Pattern Detection<br/>Keyword + Priority Rules]
+    subgraph "2. Enhanced AI Processing"
+        B1[Multi-layered Analysis<br/>Enhanced Pattern Engine<br/>• Fuzzy Matching<br/>• Regex Patterns<br/>• Confidence Scoring]
+        B2[Intelligent Categorization<br/>ML Integration Ready<br/>• Hybrid AI Framework<br/>• Fallback Mechanisms]
+        B3[Continuous Learning<br/>Pattern Learning Service<br/>• Feedback Processing<br/>• Model Improvement]
     end
     
     subgraph "3. Human Intelligence"
-        C1[Strategic Triage<br/>Manual Scoring]
-        C2[Business Context<br/>Relationship Insights]
-        C3[Creative Solutions<br/>Improvement Ideas]
+        C1[Strategic Triage<br/>Manual Scoring with AI<br/>• Explainable Results<br/>• Context Integration]
+        C2[Business Context<br/>Team-Specific Insights<br/>• Performance Analytics<br/>• Trend Analysis]
+        C3[Collaborative Decisions<br/>Human+AI Partnership<br/>• Smart Recommendations<br/>• Evidence-Based Choices]
     end
     
-    subgraph "4. Actionable Output"
-        D1[Prioritized Backlog<br/>Data-Driven Decisions]
-        D2[Toil Reduction Plans<br/>Specific Actions]
-        D3[Proactive Intelligence<br/>Prevention Focus]
+    subgraph "4. Actionable Intelligence"
+        D1[Team Dashboards<br/>Advanced Analytics<br/>• Performance Metrics<br/>• Pattern Insights]
+        D2[Generated Reports<br/>PDF/CSV Export<br/>• Customizable Views<br/>• Scheduled Delivery]
+        D3[Continuous Improvement<br/>System Evolution<br/>• Pattern Adaptation<br/>• Knowledge Accumulation]
     end
     
     A1 --> B1
@@ -101,6 +197,7 @@ flowchart LR
     C3 --> D1
     D1 --> D2
     D2 --> D3
+    D3 --> B3
     
     style A1 fill:#FFB6C1
     style A2 fill:#FFB6C1
@@ -251,27 +348,58 @@ graph TD
     style C3 fill:#98FB98
 ```
 
-## 📈 **Innovation Day Presentation Flow**
+## 🚀 **ML Integration Readiness Flow**
 
 ```mermaid
-journey
-    title Innovation Day Presentation Journey
-    section Problem
-      Manual Analysis    : 1: Current State
-      Scattered Signals  : 1: Pain Points
-      Reactive Support   : 1: Inefficiency
-    section Solution
-      Plugin Architecture: 5: Technical Excellence
-      Human+AI Collab    : 5: Theme Alignment
-      Real Demo         : 5: Working System
-    section Business Value
-      70% Time Savings  : 5: Measurable ROI
-      Proactive Support : 5: Strategic Value
-      Scalable Platform : 5: Future Vision
-    section Technical Depth
-      TDD Foundation    : 4: Quality Engineering
-      Enterprise Patterns: 4: Professional Code
-      Extensible Design : 4: Maintainability
+graph LR
+    subgraph "Current State Assessment"
+        A1[Team Data Volume<br/>✅ Sufficient History]
+        A2[Pattern Quality<br/>✅ High Accuracy]
+        A3[Feedback Coverage<br/>✅ User Engagement]
+    end
+    
+    subgraph "ML Readiness Analysis"
+        B1[Data Volume Score<br/>📊 >100 Examples]
+        B2[Quality Score<br/>📊 >70% Accuracy]
+        B3[Balance Score<br/>📊 Even Distribution]
+    end
+    
+    subgraph "Integration Strategy"
+        C1[Hybrid Mode<br/>🤖 ML + Traditional]
+        C2[Confidence Gating<br/>🤖 Smart Fallback]
+        C3[Online Learning<br/>🤖 Continuous Improve]
+    end
+    
+    subgraph "Future Capabilities"
+        D1[Semantic Understanding<br/>🧠 BERT/RoBERTa]
+        D2[Predictive Analytics<br/>🧠 Forecasting]
+        D3[Autonomous Operation<br/>🧠 Self-Managing]
+    end
+    
+    A1 --> B1
+    A2 --> B2
+    A3 --> B3
+    
+    B1 --> C1
+    B2 --> C2
+    B3 --> C3
+    
+    C1 --> D1
+    C2 --> D2
+    C3 --> D3
+    
+    style A1 fill:#FFB6C1
+    style A2 fill:#FFB6C1
+    style A3 fill:#FFB6C1
+    style B1 fill:#87CEEB
+    style B2 fill:#87CEEB
+    style B3 fill:#87CEEB
+    style C1 fill:#DDA0DD
+    style C2 fill:#DDA0DD
+    style C3 fill:#DDA0DD
+    style D1 fill:#98FB98
+    style D2 fill:#98FB98
+    style D3 fill:#98FB98
 ```
 
 ---
@@ -287,11 +415,11 @@ journey
 - Export as PNG/SVG for slides
 - Copy as image into PowerPoint/Google Slides
 
-### **For Innovation Day:**
-- **Start with**: Human+AI Collaboration Workflow
-- **Show technical depth**: System Architecture
-- **Demonstrate process**: Data Flow Diagram
-- **Prove quality**: Class Diagram + mention 75 passing tests
+### **For Technical Presentations:**
+- **Start with**: Current vs Future State Architecture
+- **Show capabilities**: Enhanced Data Flow Diagram  
+- **Demonstrate readiness**: ML Integration Readiness Flow
+- **Prove quality**: Advanced features + comprehensive testing
 
 ---
 

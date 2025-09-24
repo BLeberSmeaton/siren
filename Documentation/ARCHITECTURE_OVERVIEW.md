@@ -1,59 +1,63 @@
-# SIREN Architecture Overview
+# SIREN Architecture Overview - Advanced AI + Team Management
 
-## 🏗️ **System Architecture**
+## 🏗️ **Enhanced System Architecture**
 
-SIREN implements a **plugin-based architecture** that enables extensible support signal processing through clean interfaces and dependency injection.
+SIREN implements an **advanced AI-powered architecture** with team-specific configurations, enhanced pattern recognition, and ML integration readiness. The system combines plugin-based extensibility with sophisticated AI capabilities for intelligent support signal processing.
 
-### **Core Architecture Principles**
+### **Enhanced Architecture Principles**
 
-1. **Interface Segregation**: Each component has a single, well-defined responsibility
-2. **Dependency Inversion**: High-level modules don't depend on low-level modules
-3. **Open/Closed Principle**: System is open for extension, closed for modification
-4. **Plugin Pattern**: New data sources can be added without changing existing code
+1. **AI-First Design**: Advanced pattern recognition with multi-layered analysis
+2. **Team-Centric Configuration**: Multi-tenant architecture with team-specific settings
+3. **Continuous Learning**: System adapts and improves through feedback loops
+4. **ML Integration Ready**: Hybrid architecture supporting traditional + ML approaches
+5. **Interface Segregation**: Each component has a single, well-defined responsibility
+6. **Explainable AI**: Transparent decision-making with detailed reasoning
 
-### **Component Overview**
+### **Enhanced Component Overview**
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    SIREN System Architecture                │
+│              SIREN Enhanced AI Architecture                 │
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
 │  ┌─────────────────┐    ┌─────────────────┐                │
-│  │  Data Sources   │    │   Interfaces    │                │
+│  │  Data Sources   │    │ Team Management │                │
 │  │                 │    │                 │                │
-│  │ • CSV Files     │───▶│ ISignalProvider │                │
-│  │ • Jira API      │    │ ICategorizer    │                │
-│  │ • Teams API     │    │                 │                │
-│  │ • Future...     │    │                 │                │
-│  └─────────────────┘    └─────────────────┘                │
-│           │                       │                        │
-│           ▼                       ▼                        │
-│  ┌─────────────────┐    ┌─────────────────┐                │
-│  │ Signal Provider │    │ Category Engine │                │
-│  │                 │    │                 │                │
-│  │ • Data Reading  │    │ • Keyword Match │                │
-│  │ • Parsing       │    │ • Priority Rules│                │
-│  │ • Normalization │    │ • Classification│                │
-│  └─────────────────┘    └─────────────────┘                │
-│           │                       │                        │
-│           └───────┬───────────────┘                        │
-│                   ▼                                        │
-│         ┌─────────────────┐                                │
-│         │ Support Signal  │                                │
-│         │                 │                                │
-│         │ • Unified Model │                                │
-│         │ • Rich Metadata │                                │
-│         │ • Categories    │                                │
-│         └─────────────────┘                                │
-│                   │                                        │
-│                   ▼                                        │
-│    ┌─────────────────────────────────────┐                 │
-│    │          Output Systems             │                 │
-│    │                                     │                 │
-│    │ • Console Demo                      │                 │
-│    │ • Dashboard UI (Tomorrow)           │                 │
-│    │ • JSON Storage (Tomorrow)           │                 │
-│    │ • Reports & Analytics               │                 │
+│  │ • CSV Files     │───▶│ • Multi-team    │◄──────────────┐│
+│  │ • Jira API      │    │ • Configurations│               ││
+│  │ • Teams API     │    │ • AI Setup      │               ││
+│  │ • ServiceNow    │    │ • Smart Wizard  │               ││
+│  └─────────────────┘    └─────────────────┘               ││
+│           │                       │                        ││
+│           ▼                       ▼                        ││
+│  ┌─────────────────┐    ┌─────────────────┐                ││
+│  │Enhanced Pattern │    │ML Integration   │                ││
+│  │Recognition      │    │Service          │                ││
+│  │• Fuzzy Matching │    │• Hybrid AI      │                ││
+│  │• Regex Patterns │    │• Readiness Eval │                ││
+│  │• Confidence AI  │    │• Online Learning│                ││
+│  └─────────────────┘    └─────────────────┘                ││
+│           │                       │                        ││
+│           └───────┬───────────────┘                        ││
+│                   ▼                                        ││
+│         ┌─────────────────┐    ┌─────────────────┐         ││
+│         │Pattern Learning │    │ Advanced Triage │         ││
+│         │Service          │    │ Service         │         ││
+│         │• Feedback Loop  │    │• Explainable AI │         ││
+│         │• Continuous     │    │• Human+AI Collab│         ││
+│         │  Improvement    │    │• Context Aware  │         ││
+│         └─────────────────┘    └─────────────────┘         ││
+│                   │                       │                ││
+│                   └───────┬───────────────┘                ││
+│                           ▼                                ││
+│    ┌─────────────────────────────────────┐                 ││
+│    │      Advanced Output Systems        │                 ││
+│    │                                     │                 ││
+│    │ • React Dashboard (✅ Production)   │                 ││
+│    │ • REST API (✅ Full-featured)      │─────────────────┘│
+│    │ • Report Generation (✅ PDF/CSV)   │                  │
+│    │ • Team Analytics (✅ Advanced)     │                  │
+│    │ • Pattern Insights (✅ AI-driven) │                  │
 │    └─────────────────────────────────────┘                 │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -65,15 +69,18 @@ SIREN implements a **plugin-based architecture** that enables extensible support
 - **Modify categorization logic** by implementing `ICategorizer`
 - **No changes to existing code** when adding new providers
 
-### **Testability**
-- **Interface-based design** enables easy mocking
-- **17 unit tests** with 100% pass rate
-- **Test-driven development** approach throughout
+### **Quality & Testing**
+- **Interface-based design** enables comprehensive testing
+- **75+ unit tests** with 90%+ coverage
+- **Integration testing** for full API workflows
+- **Advanced AI testing** including confidence scoring validation
 
-### **Maintainability**
-- **Single responsibility** per component
-- **Clear boundaries** between concerns
-- **Dependency injection** for loose coupling
+### **Scalability & Maintainability**
+- **Team-centric architecture** supporting multiple organizations
+- **AI-powered automation** reducing manual configuration overhead
+- **Clear separation** between AI processing and business logic
+- **Continuous learning** enabling system evolution without code changes
+- **Dependency injection** enabling flexible service composition
 
 ## 📊 **Current Implementation Status**
 
@@ -120,16 +127,25 @@ SIREN implements a **plugin-based architecture** that enables extensible support
 - **Configuration**: Easy to change behavior through registration
 - **Enterprise Pattern**: Standard approach in professional applications
 
-## 🎯 **Innovation Day Story**
+## 🤖 **Advanced AI Capabilities**
 
-This architecture **directly supports the Human+AI collaboration theme**:
+This architecture **delivers sophisticated AI-powered support intelligence**:
 
-- **AI Heavy Lifting**: Automated signal processing, categorization, pattern detection
-- **Human Strategic Value**: Manual triage, business context, creative problem-solving
-- **Extensible Foundation**: Ready to integrate new AI services (sentiment analysis, semantic similarity)
-- **Enterprise Ready**: Proper patterns for scaling to organization-wide use
+### **Current AI Features**
+- **Enhanced Pattern Recognition**: Multi-layered analysis with confidence scoring
+- **Fuzzy String Matching**: Handles typos and variations using Levenshtein distance
+- **Regex Pattern Matching**: Technical pattern detection for APIs, certificates, performance
+- **Continuous Learning**: Feedback-driven improvement and adaptation
+- **Team-Specific Intelligence**: Customized AI models per team configuration
 
-The plugin architecture ensures that **adding new AI capabilities or data sources requires minimal changes** to existing, tested code.
+### **ML Integration Framework**
+- **Hybrid AI Architecture**: Seamlessly combines traditional and ML approaches
+- **Readiness Assessment**: Intelligent evaluation of team preparedness for ML
+- **Training Data Generation**: Automated dataset creation from usage history
+- **Online Learning**: Continuous model improvement with user feedback
+- **Explainable AI**: Transparent decision-making with detailed reasoning
+
+The advanced architecture ensures that **teams can evolve from rule-based to ML-powered categorization** with zero disruption to existing workflows.
 
 ---
 

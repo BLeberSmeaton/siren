@@ -13,13 +13,13 @@ namespace SIREN.Core.Services
         private readonly IConfigurationService _configurationService;
         private readonly EnhancedPatternRecognitionEngine _traditionalEngine;
         private readonly IMLPatternRecognitionService? _mlService;
-        private readonly PatternLearningService _learningService;
+        private readonly IPatternLearningService _learningService;
         private readonly string _teamName;
         private readonly MLIntegrationOptions _options;
 
         public MLIntegrationService(
             IConfigurationService configurationService,
-            PatternLearningService learningService,
+            IPatternLearningService learningService,
             string teamName,
             IMLPatternRecognitionService? mlService = null,
             MLIntegrationOptions? options = null)
@@ -309,8 +309,9 @@ namespace SIREN.Core.Services
                 });
             }
 
-            // Strategy 2: Agreement between ML and traditional
+            // Strategy 2: Agreement between ML and traditional (only if ML confidence is reasonable)
             if (hybridResult.MLResult != null && 
+                hybridResult.MLResult.Confidence >= 0.6 && // Add minimum confidence for agreement
                 hybridResult.TraditionalResult?.PredictedCategory == hybridResult.MLResult.PredictedCategory)
             {
                 var combinedConfidence = (hybridResult.MLResult.Confidence + (hybridResult.TraditionalResult?.Confidence ?? 0.5)) / 2;

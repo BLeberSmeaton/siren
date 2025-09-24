@@ -122,8 +122,8 @@ namespace SIREN.Core.Tests.Services
             Assert.Equal(4, insights.TotalFeedbackRecords);
             Assert.Equal(0.5, insights.AccuracyRate); // 2/4 = 50%
             Assert.Equal(3, insights.CategoryAccuracy.Count); // Certificate, API, Database
-            Assert.Equal(1.0, insights.CategoryAccuracy["Certificate"]); // 1/1 correct
-            Assert.Equal(0.5, insights.CategoryAccuracy["API"]); // 1/2 correct (1 correct prediction, 1 incorrect)
+            Assert.Equal(0.5, insights.CategoryAccuracy["Certificate"]); // 1/2 correct (1 correct, 1 incorrect)
+            Assert.Equal(1.0, insights.CategoryAccuracy["API"]); // 1/1 correct
         }
 
         [Fact]

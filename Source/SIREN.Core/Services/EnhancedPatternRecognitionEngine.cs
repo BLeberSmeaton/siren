@@ -28,7 +28,7 @@ namespace SIREN.Core.Services
             if (signal == null) return null;
 
             var categories = await _configurationService.GetActiveCategoriesAsync(_teamName);
-            var categoryList = categories.ToList();
+            var categoryList = categories.Where(c => c.IsActive).ToList(); // Extra safety check for active categories
 
             if (!categoryList.Any()) return null;
 
@@ -40,14 +40,17 @@ namespace SIREN.Core.Services
             
             if (!categoryScores.Any()) return null;
 
-            // Apply confidence threshold (minimum 60% confidence)
-            var confidentMatches = categoryScores.Where(cs => cs.ConfidenceScore >= 0.6).ToList();
+            // Apply confidence threshold (minimum 30% confidence)
+            var confidentMatches = categoryScores.Where(cs => cs.ConfidenceScore >= 0.3).ToList();
             if (!confidentMatches.Any())
             {
-                // Return best match even if below threshold, but flag as uncertain
-                var bestMatch = categoryScores.OrderByDescending(cs => cs.ConfidenceScore).First();
-                await RecordUncertainClassification(signal.Id, bestMatch.Category, bestMatch.ConfidenceScore);
-                return bestMatch.Category;
+                // Return null if no confident matches
+                if (categoryScores.Any())
+                {
+                    var bestMatch = categoryScores.OrderByDescending(cs => cs.ConfidenceScore).First();
+                    await RecordUncertainClassification(signal.Id, bestMatch.Category, bestMatch.ConfidenceScore);
+                }
+                return null;
             }
 
             // Return highest confidence match

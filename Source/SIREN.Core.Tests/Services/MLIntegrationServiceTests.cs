@@ -10,7 +10,7 @@ namespace SIREN.Core.Tests.Services
     {
         private readonly Mock<IConfigurationService> _mockConfigService;
         private readonly Mock<IMLPatternRecognitionService> _mockMLService;
-        private readonly Mock<PatternLearningService> _mockLearningService;
+        private readonly Mock<IPatternLearningService> _mockLearningService;
         private readonly MLIntegrationService _service;
         private readonly List<CategoryConfiguration> _sampleCategories;
 
@@ -18,7 +18,7 @@ namespace SIREN.Core.Tests.Services
         {
             _mockConfigService = new Mock<IConfigurationService>();
             _mockMLService = new Mock<IMLPatternRecognitionService>();
-            _mockLearningService = new Mock<PatternLearningService>(_mockConfigService.Object, It.IsAny<string>());
+            _mockLearningService = new Mock<IPatternLearningService>();
             
             _sampleCategories = new List<CategoryConfiguration>
             {
@@ -197,7 +197,7 @@ namespace SIREN.Core.Tests.Services
             var mockInsights = new TeamLearningInsights
             {
                 TeamName = "test-team",
-                TotalFeedbackRecords = 150, // Above minimum threshold
+                TotalFeedbackRecords = 400, // Well above minimum threshold for good data volume score
                 AccuracyRate = 0.8, // Good accuracy
                 CategoryAccuracy = new Dictionary<string, double>
                 {
@@ -287,11 +287,11 @@ namespace SIREN.Core.Tests.Services
                 CategoryAccuracy = new Dictionary<string, double> { { "API", 0.8 }, { "Certificate", 0.8 } }
             };
 
-            var mockDataset = new SIREN.Core.Services.MLTrainingDataset
+            var mockDataset = new SIREN.Core.Models.MLTrainingDataset
             {
-                TrainingExamples = new List<SIREN.Core.Services.MLTrainingExample>
+                TrainingExamples = new List<SIREN.Core.Models.MLTrainingExample>
                 {
-                    new SIREN.Core.Services.MLTrainingExample 
+                    new SIREN.Core.Models.MLTrainingExample 
                     { 
                         Id = "1",
                         InputText = "API issue", 

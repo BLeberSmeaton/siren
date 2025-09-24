@@ -8,7 +8,7 @@ namespace SIREN.Core.Services
     /// Service for learning and adapting categorization patterns based on user feedback
     /// and signal classification history. Prepares data for ML model training.
     /// </summary>
-    public class PatternLearningService
+    public class PatternLearningService : IPatternLearningService
     {
         private readonly IConfigurationService _configurationService;
         private readonly string _learningDataPath;
@@ -192,7 +192,7 @@ namespace SIREN.Core.Services
             }
 
             // Convert to ML training format
-            dataset.TrainingExamples = allFeedback.Select(f => new MLTrainingExample
+            dataset.TrainingExamples = allFeedback.Select(f => new Models.MLTrainingExample
             {
                 Id = f.Id,
                 InputText = $"{f.SignalTitle} {f.SignalDescription}",
@@ -296,7 +296,7 @@ namespace SIREN.Core.Services
             {
                 var text = $"{signal.Title} {signal.Description}".ToLower();
                 var words = text.Split(' ', StringSplitOptions.RemoveEmptyEntries)
-                    .Where(w => w.Length > 3) // Filter out short words
+                    .Where(w => w.Length >= 3) // Filter out very short words (allow 3+ chars)
                     .Where(w => !IsStopWord(w)); // Filter out stop words
 
                 foreach (var word in words)
@@ -400,8 +400,59 @@ namespace SIREN.Core.Services
             List<string> patterns, 
             List<SimilarTeam> similarTeams)
         {
-            // TODO: Implement sophisticated category generation
-            return Task.FromResult(new List<CategoryConfiguration>());
+            var suggestions = new List<CategoryConfiguration>();
+            
+            // Group terms by common categories
+            var authTerms = termFreq.Keys.Where(t => t.Contains("login") || t.Contains("auth") || t.Contains("token")).ToList();
+            var paymentTerms = termFreq.Keys.Where(t => t.Contains("payment") || t.Contains("gateway") || t.Contains("stripe")).ToList();
+            var apiTerms = termFreq.Keys.Where(t => t.Contains("api") || t.Contains("endpoint")).ToList();
+            var certTerms = termFreq.Keys.Where(t => t.Contains("certificate") || t.Contains("ssl") || t.Contains("cert")).ToList();
+            
+            if (authTerms.Count >= 2)
+            {
+                suggestions.Add(new CategoryConfiguration
+                {
+                    Name = "Authentication",
+                    Keywords = authTerms.Take(5).ToList(),
+                    Priority = 1,
+                    IsActive = true
+                });
+            }
+            
+            if (paymentTerms.Count >= 2)
+            {
+                suggestions.Add(new CategoryConfiguration
+                {
+                    Name = "Payment",
+                    Keywords = paymentTerms.Take(5).ToList(),
+                    Priority = 2,
+                    IsActive = true
+                });
+            }
+            
+            if (apiTerms.Any())
+            {
+                suggestions.Add(new CategoryConfiguration
+                {
+                    Name = "API",
+                    Keywords = apiTerms.Take(5).ToList(),
+                    Priority = 3,
+                    IsActive = true
+                });
+            }
+            
+            if (certTerms.Any())
+            {
+                suggestions.Add(new CategoryConfiguration
+                {
+                    Name = "Certificate",
+                    Keywords = certTerms.Take(5).ToList(),
+                    Priority = 4,
+                    IsActive = true
+                });
+            }
+            
+            return Task.FromResult(suggestions);
         }
 
         private List<DataSourceConfiguration> SuggestDataSourcesFromSignals(List<SupportSignal> signals)
@@ -430,8 +481,38 @@ namespace SIREN.Core.Services
 
         private List<string> ExtractCommonTermsFromSignals(List<SupportSignal> signals)
         {
-            var termFreq = ExtractTermFrequency(signals);
-            return termFreq.Keys.Take(10).ToList();
+            // For keyword suggestions, we want to be more inclusive
+            var termFreq = new Dictionary<string, int>();
+            
+            foreach (var signal in signals)
+            {
+                var text = $"{signal.Title} {signal.Description}".ToLower();
+                var words = text.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                    .Where(w => w.Length >= 3) // Filter out very short words
+                    .Where(w => !IsStopWord(w)) // Filter out stop words
+                    .Where(w => !IsCommonTechWord(w)); // Filter out overly common tech words
+
+                foreach (var word in words)
+                {
+                    termFreq[word] = termFreq.GetValueOrDefault(word, 0) + 1;
+                }
+            }
+
+            // For keyword suggestions, include words that appear even once
+            return termFreq.OrderByDescending(kvp => kvp.Value)
+                          .Take(10)
+                          .Select(kvp => kvp.Key)
+                          .ToList();
+        }
+
+        private bool IsCommonTechWord(string word)
+        {
+            var commonTechWords = new HashSet<string>
+            {
+                "error", "issue", "problem", "failed", "needs", "process", "system",
+                "service", "application", "server", "client", "user", "data"
+            };
+            return commonTechWords.Contains(word.ToLower());
         }
 
         private double CalculateKeywordConfidence(List<string> terms, int sampleSize)
@@ -446,126 +527,5 @@ namespace SIREN.Core.Services
         }
 
         #endregion
-    }
-
-    // Supporting data classes
-    public class CategorizationFeedback
-    {
-        public string Id { get; set; } = string.Empty;
-        public string TeamName { get; set; } = string.Empty;
-        public string SignalId { get; set; } = string.Empty;
-        public string SignalTitle { get; set; } = string.Empty;
-        public string SignalDescription { get; set; } = string.Empty;
-        public string SignalSource { get; set; } = string.Empty;
-        public DateTime SignalTimestamp { get; set; }
-        public string PredictedCategory { get; set; } = string.Empty;
-        public string ActualCategory { get; set; } = string.Empty;
-        public double ConfidenceScore { get; set; }
-        public bool IsCorrect { get; set; }
-        public string UserId { get; set; } = string.Empty;
-        public DateTime RecordedAt { get; set; }
-        public Dictionary<string, object> AdditionalMetadata { get; set; } = new();
-    }
-
-    public class TeamLearningData
-    {
-        public string TeamName { get; set; } = string.Empty;
-        public List<CategorizationFeedback> FeedbackHistory { get; set; } = new();
-        public List<ImprovementSuggestion> ImprovementSuggestions { get; set; } = new();
-        public List<PatternHistory> PatternHistory { get; set; } = new();
-        public DateTime LastUpdated { get; set; }
-    }
-
-    public class NewTeamLearningResult
-    {
-        public string TeamName { get; set; } = string.Empty;
-        public int AnalyzedSignalCount { get; set; }
-        public List<CategoryConfiguration> SuggestedCategories { get; set; } = new();
-        public List<DataSourceConfiguration> SuggestedDataSources { get; set; } = new();
-        public List<SimilarTeam> SimilarTeams { get; set; } = new();
-        public double ConfidenceScore { get; set; }
-        public DateTime LearningTimestamp { get; set; }
-    }
-
-    public class TeamLearningInsights
-    {
-        public string TeamName { get; set; } = string.Empty;
-        public int TotalFeedbackRecords { get; set; }
-        public double AccuracyRate { get; set; }
-        public Dictionary<string, double> CategoryAccuracy { get; set; } = new();
-        public List<MisclassificationPattern> CommonMisclassifications { get; set; } = new();
-        public List<ImprovementSuggestion> SuggestedImprovements { get; set; } = new();
-        public List<PatternTrend> PatternTrends { get; set; } = new();
-        public DateTime LastUpdated { get; set; }
-    }
-
-    public class MLTrainingDataset
-    {
-        public DateTime GeneratedAt { get; set; }
-        public List<string> Teams { get; set; } = new();
-        public DateTime FromDate { get; set; }
-        public List<MLTrainingExample> TrainingExamples { get; set; } = new();
-        public Dictionary<string, int> CategoryDistribution { get; set; } = new();
-        public Dictionary<string, int> TeamDistribution { get; set; } = new();
-    }
-
-    public class MLTrainingExample
-    {
-        public string Id { get; set; } = string.Empty;
-        public string InputText { get; set; } = string.Empty;
-        public string TrueCategory { get; set; } = string.Empty;
-        public string PredictedCategory { get; set; } = string.Empty;
-        public string TeamContext { get; set; } = string.Empty;
-        public string Source { get; set; } = string.Empty;
-        public DateTime Timestamp { get; set; }
-        public bool WasCorrect { get; set; }
-        public double ConfidenceScore { get; set; }
-        public Dictionary<string, object> Metadata { get; set; } = new();
-    }
-
-    public class KeywordSuggestion
-    {
-        public string CategoryName { get; set; } = string.Empty;
-        public List<string> SuggestedKeywords { get; set; } = new();
-        public double Confidence { get; set; }
-        public string Reasoning { get; set; } = string.Empty;
-        public List<string> SampleSignals { get; set; } = new();
-    }
-
-    public class MisclassificationPattern
-    {
-        public string PredictedCategory { get; set; } = string.Empty;
-        public string ActualCategory { get; set; } = string.Empty;
-        public int Count { get; set; }
-        public List<string> ExampleSignals { get; set; } = new();
-    }
-
-    public class ImprovementSuggestion
-    {
-        public string Type { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public string CategoryAffected { get; set; } = string.Empty;
-        public DateTime SuggestedAt { get; set; }
-    }
-
-    public class PatternHistory
-    {
-        public string Pattern { get; set; } = string.Empty;
-        public DateTime RecordedAt { get; set; }
-        public double Effectiveness { get; set; }
-    }
-
-    public class PatternTrend
-    {
-        public string Pattern { get; set; } = string.Empty;
-        public List<double> EffectivenessHistory { get; set; } = new();
-        public string Trend { get; set; } = string.Empty; // "improving", "declining", "stable"
-    }
-
-    public class SimilarTeam
-    {
-        public string TeamName { get; set; } = string.Empty;
-        public double SimilarityScore { get; set; }
-        public List<string> CommonPatterns { get; set; } = new();
     }
 }

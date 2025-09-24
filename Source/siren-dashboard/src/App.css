@@ -392,11 +392,6 @@ body {
   margin-bottom: var(--spacing-xs);
 }
 
-.signal-title .description {
-  font-size: var(--font-size-sm);
-  color: var(--color-secondary);
-}
-
 /* Badges */
 .category-badge, .score-badge {
   padding: var(--spacing-xs) var(--spacing-sm);
@@ -537,11 +532,6 @@ body {
 .signal-info h3 {
   margin: 0 0 var(--spacing-md) 0;
   color: var(--color-dark);
-}
-
-.signal-description {
-  margin-bottom: var(--spacing-md);
-  color: var(--color-secondary);
 }
 
 .signal-meta {

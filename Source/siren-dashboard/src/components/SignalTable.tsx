@@ -87,7 +87,6 @@ const SignalTable: React.FC<SignalTableProps> = ({
             <div key={signal.id} className="table-row">
               <div className="column signal-title">
                 <div className="title">{signal.title}</div>
-                <div className="description">{signal.description.substring(0, 80)}...</div>
               </div>
               <div className="column">
                 <span className={`category-badge ${getCategoryClass(signal.category)}`}>

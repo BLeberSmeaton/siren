@@ -1,80 +1,59 @@
 # SIREN System Diagrams - Current & Future State
 
-## 🏗️ **Current System Architecture (Enhanced AI + Team Management)**
+## 🏗️ **Current System Architecture (Production Ready)**
 
 ```mermaid
 graph TB
-    subgraph "External Data Sources"
-        CSV[CSV Files<br/>Legacy Exports]
-        JIRA[Jira API<br/>Live Issues]
-        TEAMS[Teams API<br/>Real-time Messages]
-        FUTURE[Future Sources<br/>Slack, ServiceNow, etc.]
+    subgraph "Data Sources"
+        CSV[CSV Files<br/>✅ Active]
+        JIRA[Jira API<br/>🔄 Integration Ready]
+        TEAMS[Teams API<br/>🔄 Future Enhancement]
     end
     
-    subgraph "SIREN Core System"
-        subgraph "Provider Layer"
-            CSVP[CsvSignalProvider<br/>✅ Active]
-            JIRAP[JiraSignalProvider<br/>⏳ Ready]
-            TEAMSP[TeamsSignalProvider<br/>⏳ Ready]
+    subgraph "SIREN Core Processing"
+        subgraph "Data Layer"
+            CSVP[CsvSignalProvider<br/>✅ Production Ready]
+            JIRAP[JiraSignalProvider<br/>🔄 Ready for Integration]
         end
         
-        subgraph "Enhanced AI Processing"
-            ENHANCED[EnhancedPatternEngine<br/>✅ Multi-layered AI<br/>• Fuzzy Matching<br/>• Regex Patterns<br/>• Confidence Scoring]
-            ML_INTEG[MLIntegrationService<br/>✅ Hybrid AI Framework<br/>• Traditional + ML<br/>• Readiness Assessment]
-            LEARNING[PatternLearningService<br/>✅ Continuous Learning<br/>• Feedback Processing<br/>• Pattern Evolution]
+        subgraph "AI Intelligence Layer"
+            PATTERN[Enhanced Pattern Engine<br/>✅ Multi-layered AI<br/>• Confidence Scoring<br/>• Fuzzy Matching<br/>• Regex Patterns]
+            TRIAGE[Manual Triage Service<br/>✅ Human+AI Collab<br/>• Business Context<br/>• Strategic Decisions]
         end
         
-        subgraph "Team Management"
-            CONFIG[ConfigurationService<br/>✅ Team-Aware Config<br/>• Multi-team Support<br/>• Dynamic Categories]
-            WIZARD[NewTeamWizard<br/>✅ AI-Powered Setup<br/>• Sample Analysis<br/>• Smart Suggestions]
-        end
-        
-        subgraph "Intelligence Layer"
-            TRIAGE[ManualTriageService<br/>✅ Human+AI Collab<br/>• Explainable Results<br/>• Feedback Loop]
-            INSIGHTS[Advanced Analytics<br/>✅ Deep Insights<br/>• Team Performance<br/>• Trend Analysis]
+        subgraph "Learning & Analytics"
+            LEARNING[Pattern Learning<br/>✅ Continuous Improvement<br/>• Feedback Processing<br/>• Performance Insights]
+            ANALYTICS[Advanced Analytics<br/>✅ Dashboard Ready<br/>• Category Distribution<br/>• Trend Analysis]
         end
     end
     
-    subgraph "Output Systems"
-        DASH[React Dashboard<br/>✅ Production Ready<br/>• Team Management<br/>• Advanced Analytics]
-        API[ASP.NET Core API<br/>✅ Full REST API<br/>• Team Endpoints<br/>• Pattern APIs]
-        REPORTS[Report Generation<br/>✅ PDF/CSV Export<br/>• Custom Reports<br/>• Scheduled Delivery]
+    subgraph "User Interface Layer"
+        DASH[React Dashboard<br/>✅ Production Ready<br/>• Professional UI<br/>• Responsive Design]
+        API[REST API<br/>✅ Full Coverage<br/>• 100% Tested<br/>• OpenAPI Docs]
     end
     
     CSV --> CSVP
     JIRA --> JIRAP
-    TEAMS --> TEAMSP
-    FUTURE --> TEAMSP
     
-    CSVP --> ENHANCED
-    JIRAP --> ENHANCED
-    TEAMSP --> ENHANCED
+    CSVP --> PATTERN
+    JIRAP --> PATTERN
     
-    ENHANCED --> ML_INTEG
-    ML_INTEG --> LEARNING
-    LEARNING --> TRIAGE
+    PATTERN --> TRIAGE
+    TRIAGE --> LEARNING
+    LEARNING --> ANALYTICS
     
-    CONFIG --> ENHANCED
-    WIZARD --> CONFIG
-    
-    TRIAGE --> INSIGHTS
-    INSIGHTS --> DASH
-    INSIGHTS --> API
-    INSIGHTS --> REPORTS
+    ANALYTICS --> DASH
+    ANALYTICS --> API
+    DASH <--> API
     
     style CSVP fill:#90EE90
-    style ENHANCED fill:#90EE90
-    style ML_INTEG fill:#90EE90
-    style LEARNING fill:#90EE90
-    style CONFIG fill:#90EE90
-    style WIZARD fill:#90EE90
+    style PATTERN fill:#90EE90
     style TRIAGE fill:#90EE90
-    style INSIGHTS fill:#90EE90
+    style LEARNING fill:#90EE90
+    style ANALYTICS fill:#90EE90
     style DASH fill:#90EE90
     style API fill:#90EE90
-    style REPORTS fill:#90EE90
-    style JIRAP fill:#FFE4B5
-    style TEAMSP fill:#FFE4B5
+    style JIRAP fill:#87CEEB
 ```
 
 ## 🤖 **Future State Architecture (Full ML Integration)**

@@ -82,28 +82,13 @@ SIREN implements an **advanced AI-powered architecture** with team-specific conf
 - **Continuous learning** enabling system evolution without code changes
 - **Dependency injection** enabling flexible service composition
 
-## 📊 **Current Implementation Status**
-
-### **✅ Completed Components**
-
-| Component | Status | Test Coverage | Description |
-|-----------|--------|---------------|-------------|
-| `ISignalProvider` | ✅ Complete | 5 tests | Interface for data source plugins |
-| `ICategorizer` | ✅ Complete | 4 tests | Interface for categorization logic |
-| `SupportSignal` | ✅ Complete | 3 tests | Universal data model |
-| `CsvSignalProvider` | ✅ Complete | 5 tests | CSV file data source |
-| `CategoryEngine` | ✅ Complete | 4 tests | Keyword-based categorization |
-| Dependency Injection | ✅ Complete | - | Service registration & resolution |
-
 ### **🔜 Planned Components**
 
 | Component | Priority | Estimated Effort | Description |
 |-----------|----------|------------------|-------------|
 | `JiraSignalProvider` | High | 2-3 hours | Live Jira API integration |
 | `TeamsSignalProvider` | Medium | 2-3 hours | Microsoft Graph API integration |
-| JSON Storage Service | High | 1-2 hours | Historical data persistence |
-| Dashboard UI | High | 3-4 hours | Web-based interface |
-| Manual Scoring System | Medium | 1-2 hours | Human triage capabilities |
+| `SlackSignalProvider` | Medium | 2-3 hours | Slack integration |
 
 ## 🧠 **Design Decisions & Rationale**
 
@@ -127,25 +112,59 @@ SIREN implements an **advanced AI-powered architecture** with team-specific conf
 - **Configuration**: Easy to change behavior through registration
 - **Enterprise Pattern**: Standard approach in professional applications
 
-## 🤖 **Advanced AI Capabilities**
+## 🤖 **Advanced AI & Pattern Recognition**
 
-This architecture **delivers sophisticated AI-powered support intelligence**:
+SIREN implements **sophisticated AI-powered intelligence** with enhanced pattern recognition and ML integration readiness:
 
-### **Current AI Features**
-- **Enhanced Pattern Recognition**: Multi-layered analysis with confidence scoring
-- **Fuzzy String Matching**: Handles typos and variations using Levenshtein distance
-- **Regex Pattern Matching**: Technical pattern detection for APIs, certificates, performance
-- **Continuous Learning**: Feedback-driven improvement and adaptation
-- **Team-Specific Intelligence**: Customized AI models per team configuration
+### **Enhanced Pattern Recognition Engine**
+**Multi-layered Pattern Matching System**:
+- **Exact keyword matching** (35% weight) - Traditional pattern matching
+- **Fuzzy string matching** (15% weight) - Handles typos using Levenshtein distance  
+- **Regex pattern matching** (20% weight) - Technical patterns (APIs, certificates, performance)
+- **Historical success rates** (10% weight) - Learning from past accuracy
+- **Semantic similarity preparation** (15% weight) - Ready for ML embeddings
+- **Contextual scoring** (5% weight) - Time and source-aware analysis
+
+**Key Capabilities**:
+- **Confidence Scoring**: All predictions include 0.0-1.0 confidence scores
+- **Explainable AI**: Detailed reasoning for every categorization decision
+- **Priority-aware Processing**: Category priority influences final scoring
+- **Typo Tolerance**: Levenshtein distance handles keyword variations
+
+### **Pattern Learning & Continuous Improvement**
+**Learning Service Features**:
+- **Feedback Learning**: Records and learns from user corrections
+- **New Team Analysis**: AI analyzes sample data to suggest categories
+- **Keyword Suggestions**: Recommends new keywords based on misclassifications  
+- **ML Training Data Generation**: Exports data for machine learning models
+- **Team Performance Insights**: Accuracy metrics and improvement recommendations
+
+**Intelligent New Team Onboarding**:
+1. **Sample Data Analysis** - Upload CSV samples for AI pattern analysis
+2. **Category Suggestions** - AI recommends categories with confidence scores
+3. **Similar Team Analysis** - Learn from existing successful team configurations
+4. **Smart Configuration** - Pre-filled settings based on pattern analysis
+5. **Continuous Learning** - System improves based on usage patterns
 
 ### **ML Integration Framework**
-- **Hybrid AI Architecture**: Seamlessly combines traditional and ML approaches
-- **Readiness Assessment**: Intelligent evaluation of team preparedness for ML
-- **Training Data Generation**: Automated dataset creation from usage history
+**Hybrid AI Architecture**:
+- **Traditional + ML Methods**: Seamlessly combines rule-based and ML approaches
+- **Intelligent Fallback**: ML failures gracefully fall back to traditional methods
+- **Confidence Gating**: Uses ML only when confidence exceeds thresholds
 - **Online Learning**: Continuous model improvement with user feedback
-- **Explainable AI**: Transparent decision-making with detailed reasoning
 
-The advanced architecture ensures that **teams can evolve from rule-based to ML-powered categorization** with zero disruption to existing workflows.
+**ML Readiness Assessment**:
+Evaluates teams for ML upgrade based on:
+- **Data Volume**: Sufficient training examples (>100 signals)
+- **Data Quality**: High accuracy rates (>70% success)  
+- **Category Balance**: Even distribution across categories
+- **Historical Performance**: Consistent improvement trends
+
+**Future ML Capabilities** (Architecture Ready):
+- **Transformer Models**: BERT/RoBERTa for semantic understanding
+- **Vector Embeddings**: Semantic similarity search for content analysis
+- **Clustering**: Automatic category discovery through unsupervised learning
+- **Transfer Learning**: Knowledge sharing between similar teams
 
 ---
 
@@ -155,47 +174,12 @@ The advanced architecture ensures that **teams can evolve from rule-based to ML-
 
 Our plugin architecture follows **SOLID principles** with clear separation of concerns:
 
-```csharp
-// Clean, focused interfaces
-public interface ISignalProvider
-{
-    Task<IEnumerable<SupportSignal>> GetSignalsAsync();
-    string ProviderName { get; }
-}
-
-public interface ICategorizer
-{
-    string? CategorizeSignal(SupportSignal signal);
-}
-
-public interface IManualTriageService
-{
-    Task UpdateManualScoreAsync(string signalId, double score);
-    Task UpdateManualCategoryAsync(string signalId, string category);
-    ManualTriageData? GetManualTriageData(string signalId);
-    IEnumerable<SupportSignal> ApplyManualTriageData(IEnumerable<SupportSignal> signals);
-}
-```
-
 **Why this design works:**
 - **Single Responsibility**: Each interface has one clear purpose
 - **Easy Testing**: Can mock any dependency
 - **Future-Proof**: Adding new capabilities doesn't break existing code
 
 ### **Data Model Design**
-
-```csharp
-public class SupportSignal
-{
-    public string Id { get; set; } = string.Empty;
-    public string Title { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
-    public string Source { get; set; } = string.Empty;        // "CSV", "Jira", "Teams"
-    public DateTime Timestamp { get; set; }
-    public string? Category { get; set; }                     // AI-assigned category
-    public double? ManualScore { get; set; }                  // Human triage score
-}
-```
 
 **Design Decisions:**
 - **Universal Model**: Works for any data source (CSV, API, real-time)
@@ -205,38 +189,6 @@ public class SupportSignal
 
 ### **Categorization Algorithm**
 
-```csharp
-public string? CategorizeSignal(SupportSignal signal)
-{
-    // Combine title and description for analysis
-    var content = $"{signal.Title} {signal.Description}".ToLower();
-    
-    // Count matches for each category
-    var categoryMatches = new Dictionary<string, int>();
-    
-    foreach (var (category, keywords) in _categoryKeywords)
-    {
-        var matchCount = keywords.Count(keyword => 
-            content.Contains(keyword.ToLower(), StringComparison.OrdinalIgnoreCase));
-        
-        if (matchCount > 0)
-            categoryMatches[category] = matchCount;
-    }
-    
-    // Apply priority rules (Certificate, Bank Feeds, Security win on ties)
-    foreach (var priorityCategory in _priorityCategories)
-    {
-        if (categoryMatches.ContainsKey(priorityCategory) && categoryMatches.Count > 1)
-            return priorityCategory;
-    }
-    
-    // Return highest match count
-    return categoryMatches.OrderByDescending(kv => kv.Value)
-                         .ThenBy(kv => kv.Key)
-                         .FirstOrDefault().Key;
-}
-```
-
 **Algorithm Strengths:**
 - **Partial Matching**: Finds keywords anywhere in content
 - **Priority Rules**: Business-critical categories (Certificate, Security) take precedence
@@ -245,36 +197,6 @@ public string? CategorizeSignal(SupportSignal signal)
 
 ### **Provider Implementation Pattern**
 
-```csharp
-public class CsvSignalProvider : ISignalProvider
-{
-    private readonly string _csvContent;
-    
-    public string ProviderName => "CSV";
-    
-    public async Task<IEnumerable<SupportSignal>> GetSignalsAsync()
-    {
-        // Proper async pattern (even for non-async operations)
-        await Task.Delay(1);
-        
-        try
-        {
-            using var reader = new StringReader(_csvContent);
-            using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
-            
-            var records = csv.GetRecords<CsvRecord>().ToList();
-            
-            return records.Select(ConvertToSupportSignal).ToList();
-        }
-        catch (Exception)
-        {
-            // Graceful degradation - return empty rather than crash
-            return new List<SupportSignal>();
-        }
-    }
-}
-```
-
 **Implementation Patterns:**
 - **Error Handling**: Graceful degradation, never crash the system
 - **Async Compliance**: Interface consistency even for sync operations
@@ -282,18 +204,6 @@ public class CsvSignalProvider : ISignalProvider
 - **Data Transformation**: Clean conversion from source format to universal model
 
 ### **Dependency Injection Setup**
-
-```csharp
-private static void ConfigureServices(ServiceCollection services)
-{
-    // Register core services
-    services.AddTransient<ICategorizer, CategoryEngine>();
-    
-    // Register providers (can be made configurable)
-    services.AddSingleton<ISignalProvider>(provider => 
-        new CsvSignalProvider(sampleData));
-}
-```
 
 **Benefits of DI Approach:**
 - **Testability**: Can inject mock implementations

@@ -2,6 +2,10 @@ import React from 'react';
 import { SupportSignal } from '../types';
 import { isTeamsFeatureEnabled } from '../config/features';
 import DashboardSummary from '../components/DashboardSummary';
+import SignalsByCategoryChart from '../components/SignalsByCategoryChart';
+import ToilReductionPanel from '../components/ToilReductionPanel';
+import CategoryStatsTable from '../components/CategoryStatsTable';
+import CategoryDistributionChart from '../components/CategoryDistributionChart';
 import SignalTable from '../components/SignalTable';
 import TriagePanel from '../components/TriagePanel';
 import ReportGenerationModal from '../components/ReportGenerationModal';
@@ -122,21 +126,6 @@ const Dashboard: React.FC = () => {
               </div>
             )}
             
-            <div className="category-filter">
-              <label htmlFor="category-select">Filter by category:</label>
-              <select
-                id="category-select"
-                value={selectedCategory || ''}
-                onChange={(e) => handleCategoryFilter(e.target.value || null)}
-              >
-                <option value="">All categories</option>
-                {categoryStats.map((stat, index) => (
-                  <option key={`filter-${index}-${stat.category}`} value={stat.category}>
-                    {stat.category} ({stat.count})
-                  </option>
-                ))}
-              </select>
-            </div>
           </div>
         </div>
       </div>
@@ -206,7 +195,7 @@ const Dashboard: React.FC = () => {
 
       {/* Main Content */}
       <div className="dashboard-content">
-        {/* Summary Section */}
+        {/* Summary Cards Section */}
         <section className="dashboard-section">
           <DashboardSummary
             summary={summary}
@@ -215,12 +204,43 @@ const Dashboard: React.FC = () => {
           />
         </section>
 
+        {/* Charts Section */}
+        <section className="dashboard-section">
+          <SignalsByCategoryChart
+            categoryStats={categoryStats}
+            loading={loading}
+          />
+        </section>
+
+        {/* Toil Reduction Analysis Section */}
+        <section className="dashboard-section">
+          <ToilReductionPanel loading={loading} />
+        </section>
+
         {/* Signals Table Section */}
         <section className="dashboard-section">
           <SignalTable
             signals={signals}
             onSignalSelect={handleSignalSelect}
             selectedCategory={selectedCategory || undefined}
+            categoryStats={categoryStats}
+            onCategoryFilter={handleCategoryFilter}
+            loading={loading}
+          />
+        </section>
+
+        {/* Category Stats Table */}
+        <section className="dashboard-section">
+          <CategoryStatsTable
+            categoryStats={categoryStats}
+            loading={loading}
+          />
+        </section>
+
+        {/* Category Distribution - Moved to Bottom */}
+        <section className="dashboard-section">
+          <CategoryDistributionChart
+            summary={summary}
             loading={loading}
           />
         </section>

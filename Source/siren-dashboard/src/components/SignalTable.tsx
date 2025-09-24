@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { SupportSignal } from '../types';
+import { SupportSignal, CategoryStats } from '../types';
 import Pagination from './Pagination';
 
 interface SignalTableProps {
   signals: SupportSignal[];
   onSignalSelect: (signal: SupportSignal) => void;
   selectedCategory?: string;
+  categoryStats: CategoryStats[];
+  onCategoryFilter: (category: string | null) => void;
   loading?: boolean;
 }
 
@@ -14,6 +16,8 @@ const SignalTable: React.FC<SignalTableProps> = ({
   signals, 
   onSignalSelect, 
   selectedCategory, 
+  categoryStats,
+  onCategoryFilter,
   loading = false 
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -54,20 +58,40 @@ const SignalTable: React.FC<SignalTableProps> = ({
   return (
     <div className="signal-table-container">
       <div className="signal-table-header">
-        <h3>Support Signals</h3>
-        <div className="signal-count">
-          {totalItems === 0 ? (
-            'No signals found'
-          ) : (
-            <>
-              {showingStart === showingEnd ? (
-                `Showing ${showingStart} of ${totalItems} signals`
-              ) : (
-                `Showing ${showingStart}-${showingEnd} of ${totalItems} signals`
-              )}
-              {selectedCategory && <span className="filter"> filtered by {selectedCategory}</span>}
-            </>
-          )}
+        <div className="table-title-section">
+          <h3>Support Signals</h3>
+          <div className="signal-count">
+            {totalItems === 0 ? (
+              'No signals found'
+            ) : (
+              <>
+                {showingStart === showingEnd ? (
+                  `Showing ${showingStart} of ${totalItems} signals`
+                ) : (
+                  `Showing ${showingStart}-${showingEnd} of ${totalItems} signals`
+                )}
+                {selectedCategory && <span className="filter"> filtered by {selectedCategory}</span>}
+              </>
+            )}
+          </div>
+        </div>
+        
+        <div className="table-controls">
+          <div className="category-filter">
+            <label htmlFor="signal-category-select">Filter by category:</label>
+            <select
+              id="signal-category-select"
+              value={selectedCategory || ''}
+              onChange={(e) => onCategoryFilter(e.target.value || null)}
+            >
+              <option value="">All categories</option>
+              {categoryStats.map((stat, index) => (
+                <option key={`signal-filter-${index}-${stat.category}`} value={stat.category}>
+                  {stat.category} ({stat.count})
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
       

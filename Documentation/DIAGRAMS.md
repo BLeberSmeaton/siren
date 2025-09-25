@@ -13,7 +13,7 @@ graph TB
     subgraph "SIREN Core Processing"
         subgraph "Data Layer"
             CSVP[CsvSignalProvider<br/>✅ Production Ready]
-            JIRAP[JiraSignalProvider<br/>🔄 Ready for Integration]
+            JIRAP[SlackSignalProvider<br/>🔄 Ready for Integration]
         end
         
         subgraph "AI Intelligence Layer"

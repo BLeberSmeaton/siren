@@ -18,57 +18,81 @@
     "lastUpdated": "0001-01-01T00:00:00"
   },
   "silverfin-csv-C75": {
-    "signalId": "silverfin-csv-C75",
-    "manualScore": 7,
+    "signalId": "",
+    "manualScore": null,
     "manualCategory": null,
-    "lastUpdated": "2025-09-23T04:19:28.8874042Z"
+    "lastUpdated": "0001-01-01T00:00:00"
   },
   "exp-30-aug---ampol-c-csv-464": {
-    "signalId": "exp-30-aug---ampol-c-csv-464",
-    "manualScore": 4,
+    "signalId": "",
+    "manualScore": null,
     "manualCategory": null,
-    "lastUpdated": "2025-09-23T04:19:41.0680128Z"
+    "lastUpdated": "0001-01-01T00:00:00"
   },
   "public-api-tech-rele-csv-A08": {
-    "signalId": "public-api-tech-rele-csv-A08",
-    "manualScore": 9,
+    "signalId": "",
+    "manualScore": null,
     "manualCategory": null,
-    "lastUpdated": "2025-09-23T04:19:49.7681579Z"
+    "lastUpdated": "0001-01-01T00:00:00"
   },
   "grant-access-to-the--csv-38B": {
-    "signalId": "grant-access-to-the--csv-38B",
-    "manualScore": 7,
+    "signalId": "",
+    "manualScore": null,
     "manualCategory": null,
-    "lastUpdated": "2025-09-23T04:19:56.8259258Z"
+    "lastUpdated": "0001-01-01T00:00:00"
   },
   "nucleus-vulnerabilit-csv-28B": {
-    "signalId": "nucleus-vulnerabilit-csv-28B",
-    "manualScore": 6,
+    "signalId": "",
+    "manualScore": null,
     "manualCategory": null,
-    "lastUpdated": "2025-09-23T04:20:41.1933941Z"
+    "lastUpdated": "0001-01-01T00:00:00"
   },
   "sit-public-api-certi-csv-878": {
-    "signalId": "sit-public-api-certi-csv-878",
-    "manualScore": 6,
+    "signalId": "",
+    "manualScore": null,
     "manualCategory": null,
-    "lastUpdated": "2025-09-23T04:20:53.5630606Z"
+    "lastUpdated": "0001-01-01T00:00:00"
   },
   "huxley-api-deploy-ci-csv-543": {
-    "signalId": "huxley-api-deploy-ci-csv-543",
-    "manualScore": 8,
+    "signalId": "",
+    "manualScore": null,
     "manualCategory": null,
-    "lastUpdated": "2025-09-23T04:21:24.4264509Z"
+    "lastUpdated": "0001-01-01T00:00:00"
   },
   "slo-alert-for-504-(g-csv-609": {
-    "signalId": "slo-alert-for-504-(g-csv-609",
-    "manualScore": 8,
+    "signalId": "",
+    "manualScore": null,
     "manualCategory": null,
-    "lastUpdated": "2025-09-23T04:21:39.9525154Z"
+    "lastUpdated": "0001-01-01T00:00:00"
   },
   "clientid-missing-for-csv-19E": {
-    "signalId": "clientid-missing-for-csv-19E",
+    "signalId": "",
+    "manualScore": null,
+    "manualCategory": null,
+    "lastUpdated": "0001-01-01T00:00:00"
+  },
+  "emailing-from-api-fa-csv-1BA": {
+    "signalId": "emailing-from-api-fa-csv-1BA",
+    "manualScore": 9,
+    "manualCategory": null,
+    "lastUpdated": "2025-09-25T00:39:57.4752414Z"
+  },
+  "huxley-api-deploy-ci-csv-2CA": {
+    "signalId": "huxley-api-deploy-ci-csv-2CA",
     "manualScore": 8,
     "manualCategory": null,
-    "lastUpdated": "2025-09-23T04:21:51.6881731Z"
+    "lastUpdated": "2025-09-25T00:41:18.5498666Z"
+  },
+  "fletcher-group---pro-csv-B7A": {
+    "signalId": "fletcher-group---pro-csv-B7A",
+    "manualScore": 3,
+    "manualCategory": null,
+    "lastUpdated": "2025-09-25T00:41:33.8411487Z"
+  },
+  "update-email-in-api--csv-A52": {
+    "signalId": "update-email-in-api--csv-A52",
+    "manualScore": 9,
+    "manualCategory": null,
+    "lastUpdated": "2025-09-25T00:41:48.7437968Z"
   }
 }
